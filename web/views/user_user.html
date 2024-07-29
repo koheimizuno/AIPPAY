@@ -1,0 +1,111 @@
+{% extends 'inside.html' %}
+
+{% block main_title %}
+{{ UI.Pages.User.Title }}
+{% endblock %}
+
+{% block main_contents %}
+<form method="post" action="/me">
+
+  <div class="ji-form-item ji-form-item-v">
+    <label for="MailAddress">
+      {{ UI.Vocabulary.MailAddress }}
+    </label>
+    <input type="email" name="MailAddress" id="MailAddress" value="{{ MailAddress | escape }}"
+      required="required" autocomplete="email" />
+  </div>
+
+  <div class="ji-form-item ji-form-item-v">
+    <label for="Name">
+      {{ UI.Vocabulary.Name }}
+    </label>
+    <input type="text" name="Name" value="{{ Name | escape }}"
+      required="required" autocomplete="name" />
+  </div>
+
+  <div class="ji-form-item ji-form-item-v">
+    <label for="Organization">
+      {{ UI.Vocabulary.Organization }}
+    </label>
+    <input type="text" name="Organization" value="{{ Organization | escape }}"
+      autocomplete="organization" />
+  </div>
+
+  <div class="ji-form-item ji-form-item-v">
+    <label for="Language">
+      {{ UI.Vocabulary.Language }}
+    </label>
+    <select id="Language" name="Language" disabled>
+      {% if Language == 'en' %}
+      <option value="en" selected>
+        {{ UI.Language.en }}
+      </option>
+      {% else %}
+      {% if Language == 'zh_CN' %}
+      <option value="zh_CN" selected>
+        {{ UI.Language.zh_CN }}
+      </option>
+      {% else %}
+      {% if Language == 'zh_TW' %}
+      <option value="zh_TW" selected>
+        {{ UI.Language.zh_TW }}
+      </option>
+      {% else %}
+      <option value="ja" selected>
+        {{ UI.Language.ja }}
+      </option>
+      {% endif %}{% endif %}{% endif %}
+    </select>
+  </div>
+
+  <div class="ji-form-item ji-form-item-v">
+    <label for="Currency">
+      {{ UI.Vocabulary.Currency }}
+    </label>
+    <select id="Currency" name="Currency" disabled>
+      <option value="JPY" selected>
+        {{ UI.Currency.JPY }} (JPY)
+      </option>
+    </select>
+  </div>
+
+  <div class="ji-form-item ji-form-item-v">
+    <label for="opt-address-area">
+      {{ UI.Pages.User.TEXT000001 }}
+    </label>
+    <div class="opt-address-area">
+      <p>
+        <input type="email" name="CcAddress_0" value="{{ CcAddress_0 }}" size="100">
+      </p>
+      <p>
+        <input type="email" name="CcAddress_1" value="{{ CcAddress_1 }}" size="100">
+      </p>
+      <p>
+        <input type="email" name="CcAddress_2" value="{{ CcAddress_2 }}" size="100">
+      </p>
+    </div>
+  </div>
+
+  <input type="hidden" name="cdata" value="{{ cdata }}" />
+
+  <div class="ji-command-group">
+    <button type="submit" name="Action" value="Register" class="flat-btn">
+      {{ UI.Vocabulary.Update }}
+    </button>
+  </div>
+
+  <input type="hidden" name="_csrf" value="{{ _csrf }}" />
+
+</form>
+
+<dl class="mt-4">
+  <dt>{{ UI.Pages.User.LastLogInTime }}</dt>
+  <dd>{{ LastLogInTime }}</dd>
+</dl>
+
+<!-- div class="ji-command-group">
+  <a href="/exit" role="button" class="flat-btn">
+    {{ UI.Vocabulary.Exit }}
+  </a>
+</div -->
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends 'direct_page.html' %}
+{% block script_and_css %}
+{{ super() }}
+<style>
+h2 {
+    margin-bottom: 24px;
+}
+</style>
+{% endblock %}
+
+{% block main_contents %}
+{{ super() }}
+<p>
+    {{ UI.Pages.Request.TEXT000163 }}
+</p>
+
+{% if Messages is defined %}
+{% for Message in Messages %}
+<p class="msg-alert">{{ Message }}</p>
+{% endfor %}
+{% endif %}
+{% if Message is defined %}
+<p class="msg-alert">{{ Message }}</p>
+{% endif %}
+<div class="form-container">
+<form action="/e/req/" method="post">
+<table class="tbl-form">
+    <tr>
+        <th>
+            {{ UI.Pages.Request.TEXT000017 }}
+        </th>
+        <td>
+            <div class="button-like-checkbox-group">
+                {% if Law == 'Patent' %}
+                <label for="law-patent" class="button-like-checkbox">
+                    <input type="radio" id="law-patent" name="Law" value="Patent" checked>
+                    <span>{{ UI.Law.Patent }}</span>
+                </label>
+                {% elif Law == 'Utility' %}
+                <label for="law-utility" class="button-like-checkbox">
+                    <input type="radio" id="law-utility" name="Law" value="Utility" checked>
+                    <span>{{ UI.Law.Utility }}</span>
+                </label>
+                {% elif Law == 'Design' %}
+                <label for="law-design" class="button-like-checkbox">
+                    <input type="radio" id="law-design" name="Law" value="Design" checked>
+                    <span>{{ UI.Law.Design }}</span>
+                </label>
+                {% elif Law == 'Trademark' %}
+                <label for="law-trademark" class="button-like-checkbox">
+                    <input type="radio" id="law-trademark" name="Law" value="Trademark" checked>
+                    <span>{{ UI.Law.Trademark }}</span>
+                </label>
+                {% endif %}
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <th>
+            {{ UI.Pages.Request.TEXT000018 }}
+        </th>
+        <td>
+            <input type="text" name="RegistrationNumber" size="30" required value="{{ RegistrationNumber }}"
+                placeholder="{{ UI.Pages.Request.TEXT000107 }}" readonly>
+        </td>
+    </tr>
+</table>
+<section class="comment">
+    <p>
+        {{ UI.Pages.Request.TEXT000102 }}
+    </p>    
+</section>
+<p class="buttons">
+    <button type="submit" name="Action" value="Refer" class="flat-btn btn-refer">
+        {{ UI.Pages.Request.TEXT000201 }}<br class="only-sp">{{ UI.Pages.Request.TEXT000202 }}
+    </button>
+    <a role="button" href="/e/req/" class="flat-btn">
+        {{ UI.Pages.Request.TEXT000106 }}
+    </a>
+</p>
+<input type="hidden" name="udata" value="{{ udata }}">
+</form>
+</div>
+<p>
+    {{ UI.Pages.Request.TEXT000192 | nl2br }}
+</p>
+{% endblock %}
+
+{% block bottom_script %}
+{{ super() }}
+<script type="text/javascript">
+$(window).on("load", (e) => {
+    $('form').on('submit', (e) => {
+        showLoadingOverlay();
+        return true;
+    });
+});
+</script>
+{% endblock %}

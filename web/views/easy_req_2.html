@@ -1,0 +1,369 @@
+{% extends 'easy_page.html' %}
+
+{% block script_and_css %}
+{{ super() }}
+<style>
+h2 {
+    margin-bottom: 24px;
+}
+h3 {
+    font-weight: bold;
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+table th,
+table td {
+    padding: 4px 8px 4px 8px;
+}
+table.tbl-total tr.amount {
+    font-weight: bold;
+    background-color: #f7ebb0;
+}
+table.tbl-total th {
+    font-weight: normal;
+}
+table.tbl-total td.price {
+    text-align: right;
+}
+table.tbl-total td.memo {
+    font-size: 12px;
+}
+</style>
+{% endblock %}
+
+{% block main_contents %}
+{{ super() }}
+
+<h2>
+    {% if IsRequestable %}
+    {% else %}
+        {{ UI.Pages.Request.TEXT000116 }}
+    {% endif %}
+</h2>
+
+
+<div class="form-container">
+
+{% if Messages is defined %}
+{% for Message in Messages %}
+<p class="msg-alert">{{ Message }}</p>
+{% endfor %}
+{% endif %}
+
+<form action="/e/req/a/" method="post">
+
+<table class="tbl-form sp-tbl">
+    <tr>
+        <th>{{ UI.Pages.Request.TEXT000068 }}</th>
+        <td>
+            {{ Targets.0.RegistrationNumberPrefix }}{{ Targets.0.RegistrationNumber }}<br class="only-sp">
+            ({{ Targets.0.RegistrationDate | date_format }})
+        </td>
+    </tr>
+    <tr>
+        <th>{{ UI.Pages.Request.TEXT000108 }}</th>
+        <td>
+            {{ Targets.0.ApplicationNumberPrefix }}{{ Targets.0.ApplicationNumber }}<br class="only-sp">
+            ({{ Targets.0.ApplicationDate | date_format }})
+        </td>
+    </tr>
+    <tr>
+        <th>{{ UI.Pages.Request.TEXT000069 }}</th>
+        <td>{{ Targets.0.Subject }}</td>
+    </tr>
+    {% if Targets.0.HolderNames is defined %}
+    <tr>
+        <th>{{ UI.Pages.Request.TEXT000109 }}</th>
+        <td>{{ Targets.0.HolderNames }}</td>
+    </tr>
+    {% endif %}
+    {% if HasAdditional %}
+    <!-- 追納期間の期限表示 -->
+    <tr>
+        <th>{{ UI.Pages.Request.TEXT000114 }}</th>
+        <td>
+            {{ Targets.0.NextProcedureLastLimit | date_format }} ({{ UI.Pages.Request.TEXT000222 }}: {{ Targets.0.NextProcedureLimit | date_format }})
+        </td>
+    </tr>
+    {% else %}
+    {% if Targets.0.NextProcedureOpenDate is defined %}
+    <tr>
+        <th>{{ UI.Pages.Request.TEXT000114 }}</th>
+        <td>
+            <p>
+                {{ Targets.0.NextProcedureOpenDate | date_format }} - {{ Targets.0.NextProcedureLimit | date_format }}
+            </p>
+            {% if Targets.0.NotOpened %}
+            <p class="msg-alert">
+                {{ UI.Pages.Request.TEXT000115 }}
+            </p>
+            {% endif %}
+        </td>
+    </tr>
+    {% else %}
+    <tr>
+        <th>{{ UI.Pages.Request.TEXT000070 }}</th>
+        <td>{{ Targets.0.NextProcedureLimit | date_format }}</td>
+    </tr>
+    {% endif %}
+    {% endif %}
+
+    <!-- 存続期間満了日 -->
+    {% if Targets.0.ExpirationDate is defined %}
+    <tr>
+        <th>{{ UI.Pages.Request.TEXT000260 }}</th>
+        <td>{{ Targets.0.ExpirationDate | date_format }}</td>
+    </tr>
+    {% endif %}
+
+    {% if Targets.0.Law == 'Patent' or Targets.0.Law == 'Utility' %}
+    <tr>
+        <th>{{ UI.Pages.Request.TEXT000071 }}</th>
+        <td>{{ Targets.0.NumberOfClaims }}</td>
+    </tr>
+    {% endif %}
+    {% if Targets.0.Law == 'Trademark' %}
+    <tr>
+        <th>
+            {% if IsRequestable %}
+                {{ UI.Pages.Request.TEXT000072 }}
+            {% else %}
+                {{ UI.Pages.Request.TEXT000117 }}
+            {% endif %}
+        </th>
+        <td>
+            {% if Targets.0.Country == 'JP' and IsRequestable and (Targets.0.Classes | length > 1) and Targets.0.CanDeleteClass %}
+                <div class="tmclass">
+                    <table class="tmclass-tbl">
+                        {% for c in Targets.0.Classes %}
+                        <tr>
+                            <td>{{ c }}</td>
+                            <td>
+                                <span class="tmclass-btns">
+                                    <button type="submit" name="Action" value="TmClass_A_{{ c }}" class="tmclass-btn tmclass-btn-do"
+                                        {% if c in Targets.0.Cart.Classes %} disabled{% else %}{% endif %}>{{ UI.Pages.Request.TEXT000084}}
+                                    </button><br class="only-sp"><button type="submit" name="Action" value="TmClass_B_{{ c }}" class="tmclass-btn tmclass-btn-not"
+                                        {% if c in Targets.0.Cart.Classes %}{% else %} disabled{% endif %}>{{ UI.Pages.Request.TEXT000085}}
+                                    </button>
+                                </span> 
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    <span class="input-alert">
+                        {{ UI.Pages.Request.TEXT000195 }}
+                    </span>
+                </div>
+            {% else %}
+                {% for c in Targets.0.Classes %}
+                    {% if loop.index > 1 %}, {% endif %}{{ c }}
+                {% endfor %}
+            {% endif %}
+        </td>
+    </tr>
+    {% if IsRequestable %}
+        {% if Targets.0.RenewPaymentDate is defined %}
+            <tr>
+                <th>{{ UI.Pages.Request.TEXT000120 }}</th>
+                <td>{{ Targets.0.RenewPaymentDate | date_format  }}</td>
+            </tr>
+        {% else %}
+            {% if Targets.0.RegistrationInvestigatedDate is defined %}
+            <tr>
+                <th>{{ UI.Pages.Request.TEXT000121 }}</th>
+                <td>{{ Targets.0.RegistrationInvestigatedDate | date_format  }}</td>
+            </tr>
+            {% endif %}
+            {% if Targets.0.RegistrationPaymentDate is defined %}
+            <tr>
+                <th>{{ UI.Pages.Request.TEXT000119 }}</th>
+                <td>{{ Targets.0.RegistrationPaymentDate | date_format  }}</td>
+            </tr>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+    {% endif %} <!-- end of trademark -->
+    {% if IsRequestable %}
+    {% if Targets.0.Country == 'JP' and Targets.0.Law in ('Patent', 'Utility', 'Design') %}
+    <tr>
+        <th>{{ UI.Pages.Request.TEXT000073 }}</th>
+        <td>
+            <span class="YearRangeText">
+                {{ Targets.0.Cart.YearRangeText }}
+            </span>
+            <button class="op-btn" type="submit" name="Action" value="Years_Minus"
+                {% if Targets.0.Cart.Years <= Targets.0.Cart.MinYear %}disabled{% endif %}>&minus;
+            </button>
+            <button class="op-btn" type="submit" name="Action" value="Years_Plus"
+                {% if Targets.0.Cart.Years >= Targets.0.Cart.MaxYear %}disabled{% endif %}>&plus;
+            </button>
+            {% if Targets.0.Cart.Years > Targets.0.Cart.MinYear or Targets.0.Cart.Years < Targets.0.Cart.MaxYear %}
+            <span class="input-alert">
+                {{ UI.Pages.Request.TEXT000193 }}
+            </span>
+            {% endif %}
+        </td>
+    </tr>
+    {% endif %}
+    {% if Targets.0.Country == 'JP' and Targets.0.Law in ('Trademark',) %}
+    <tr>
+        <th>{{ UI.Pages.Request.TEXT000074 }}</th>
+        <td>
+            <span class="YearRangeText">
+                {{ Targets.0.Cart.YearRangeText }}
+            </span>
+            <button class="op-btn" type="submit" name="Action" value="Years_Minus"
+                {% if Targets.0.Cart.Years <= Targets.0.Cart.MinYear %}disabled{% endif %}>&minus;
+            </button>
+            <button class="op-btn" type="submit" name="Action" value="Years_Plus"
+                {% if Targets.0.Cart.Years >= Targets.0.Cart.MaxYear %}disabled{% endif %}>&plus;
+            </button>
+            {% if Targets.0.Cart.Years > Targets.0.Cart.MinYear or Targets.0.Cart.Years < Targets.0.Cart.MaxYear %}
+            <span class="input-alert">
+                {{ UI.Pages.Request.TEXT000194 }}
+            </span>
+            {% endif %}
+        </td>
+    </tr>
+    {% endif %}
+    {% if Targets.0.Country == 'JP' and Targets.0.Law == 'Patent' and JpGenmenCandidates is defined %}
+    <!-- 減免制度 -->
+    <tr>
+        <th>{{ UI.Pages.Request.TEXT000165 }}</th>
+        <td>
+            <table class="phantom-table">
+                <tbody>
+                    {% for c in JpGenmenCandidates %}
+                    <tr>
+                        <td>{{ c.Text }}</td>
+                        <td>
+                            <button class="flat-btn button-mini button-reverse" type="submit" name="Action" value="Discount_{{ c.Kind }}"
+                                {% if Targets.0.JpGenmen == c.Kind %}disabled{% endif %}>{{ UI.Pages.Request.TEXT000167 }}
+                            </button>
+                            <button class="flat-btn button-mini button-reverse" type="submit" name="Action" value="Discount_None"
+                                {% if Targets.0.JpGenmen == c.Kind %}{% else %}disabled{% endif %}>{{ UI.Pages.Request.TEXT000166 }}
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    {% endif %}
+    {% endif %}
+</table>
+
+{% if HasAdditional %}
+<p>
+    {{ UI.Pages.Request.TEXT000086 }}
+</p>
+{% endif %}
+
+{% if Less6Month %}
+<!-- 権利消滅についての注意文 -->
+<p class="text-red">
+   {% if Targets.0.Law == 'Patent' %}
+       {{ UI.Pages.Request.TEXT000261 | nl2br }}
+   {% else %}
+       {{ UI.Pages.Request.TEXT000262 | nl2br }}
+   {% endif %}
+</p>
+{% endif %}
+
+{% if IsRequestable %}
+{% if Totals is defined %}
+<section>
+<h3>{{ UI.Pages.Request.TEXT000081 }}</h3>
+<table class="tbl-total">
+    {% for T in Totals %}
+    <tr>
+        <th>{{ T.1 }}</th>
+        <td class="price">
+            <span class="price">{{ T.3 }}</span>
+            <span class="currency-unit">{{ T.0 }}</span>
+        </td>
+        <td class="memo">
+            {% if T.2 != '' and T.2 != '-' %}
+                ({{ T.2 }})
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    <tr class="amount">
+        <th>
+            {{ UI.Pages.Request.TEXT000029 }}
+        </th>
+        <td>
+            <span class="price">{{ TotalAmountText }}</span>
+            <span class="currency-unit">{{ Currency }}</span>
+        </td>
+        <td></td>
+    </tr>
+</table>
+
+</section>
+{% endif %}
+
+<section>
+    <h3>{{ UI.Pages.Request.TEXT000104 }}</h3>
+    <table class="user-table">
+        <tr>
+            <th>{{ UI.Pages.Request.TEXT000091 }}</th>
+            <td>
+                <input type="text" name="Organization" value="{{ Organization }}" size="50"><br>
+                ({{ UI.Pages.Request.TEXT000110 }})
+            </td>
+        </tr>
+        <tr>
+            <th>{{ UI.Pages.Request.TEXT000092 }}</th>
+            <td>
+                <input type="text" name="UserName" value="{{ UserName }}" size="50">
+            </td>
+        </tr>
+        <tr>
+            <th>{{ UI.Pages.Request.TEXT000093 }}</th>
+            <td>
+                <input type="email" name="MailAddress" value="{{ MailAddress }}" size="50">
+            </td>
+        </tr>
+        <tr>
+            <th>{{ UI.Pages.Request.TEXT000266 }}{{ UI.Pages.Request.TEXT000267 }}</th>
+            <td>
+                <input type="text" name="ManagementNumber" value="{{ ManagementNumber }}" size="50">
+            </td>
+        </tr>
+    </table>
+</section>
+{% endif %}
+
+<p class="buttons">
+    {% if IsRequestable %}
+    <button type="submit" name="Action" value="Order" class="flat-btn">
+        {{ UI.Pages.Request.TEXT000203 }}<br class="only-sp">{{ UI.Pages.Request.TEXT000204 }}
+    </button>
+    {% endif %}
+    <button type="submit" name="Action" value="Back" class="flat-btn">
+        {{ UI.Pages.Request.TEXT000111 }}
+    </button>
+</class>
+
+<input type="hidden" name="cdata" value="{{ cdata }}">
+<input type="hidden" name="pdata" value="{{ pdata }}">
+<input type="hidden" name="UserId" value="{{ UserId }}">
+    
+</form>
+</div>
+{% endblock %}
+
+{% block bottom_script %}
+{{ super() }}
+<script type="text/javascript">
+$(window).on("load", (e) => {
+    $('form').on('submit', (e) => {
+        showLoadingOverlay();
+        return true;
+    });
+});
+</script>
+{% endblock %}

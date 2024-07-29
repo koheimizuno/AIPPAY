@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block script_and_css %}
+<style>
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  background-color: #1e2188;
+}
+body > main {
+  margin-top: 32px;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 8px;
+  background-color: #fff;
+  min-width: 90vw;
+  padding: 32px;
+}
+body > main > div > * {
+  margin-bottom: 24px;
+}
+body > footer {
+  margin-top: auto;
+  margin-bottom: 0;
+  width: 100vw;
+  display: flex;
+  padding: 8px 16px;
+  background-color: #e0e0e0;
+}
+h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #cc9f3f;
+}
+@media (max-width: 767px) {
+  body > main {
+    max-width: 98vw;
+  }
+  img {
+    max-width: 300px;
+  }
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<body>
+
+  <main>
+    <div>
+
+      <p>
+        <img src="/static/img/logo_400.png" alt="AIPPAY">
+      </p>
+
+      <div>
+        <h2>{{ UI.Error.Generic }}</h2>
+        <p>{{ message | escape }}</p>
+      </div>
+  
+      <a href="/">
+        {{ UI.Common.GoToHome }}
+      </a>
+
+    </div>
+  </main>>
+
+<footer>
+  <div>
+    &copy;2023 {{ UI.Common.ProviderName }}
+  </div>
+</footer>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+</body>
+{% endblock %}

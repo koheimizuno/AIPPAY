@@ -1,0 +1,128 @@
+.head-buttons {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+table.ji-table-reqs {
+    font-size: 14px;
+}
+table.ji-table-reqs tr.row-odd {
+    background-color: #f0f0f0;
+}
+table.ji-table-reqs tr.row-first {
+    border-top: 1px solid #aaa;
+}
+table.ji-table-reqs td {
+    padding-top: 4px;
+}
+table.ji-table-reqs td > p {
+    margin-top: 0;
+    margin-bottom: 1px;
+}
+table.ji-table-reqs td.rv-user-email {
+    white-space: nowrap;
+}
+table.ji-table-reqs td.rv-man-num {
+    cursor: pointer;
+}
+.record-date {
+    font-size: 12px;
+    white-space: nowrap;
+}
+table.ji-table-reqs .button-mini {
+    padding-top: 2px;
+    padding-bottom: 2px;
+}
+
+#drp1 {
+    min-height: 550px;
+    padding: 8px;
+    border: 3px dashed #888;
+}
+
+#drp1.active {
+    background-color: #f0f0f0;
+    border-style: solid;
+}
+
+table.ji-table-reqs td {
+    vertical-align: top;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+table.ji-table-reqs td > p {
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+table.ji-table-reqs span.item-title {
+    white-space: nowrap;
+    font-size: 80%;
+}
+
+table.ji-table-reqs td.req-header {
+    min-width: 200px;
+}
+
+table.ji-table-reqs td.cell-memo {
+    padding: 0;
+}
+table.ji-table-reqs td.cell-memo p {
+    margin: 0;
+}
+table.ji-table-reqs td.cell-memo textarea.rv-memo-box {
+    font-size: 12px;
+    padding: 2px;
+}
+table.ji-table-reqs td.cell-memo p.cell-memo-1 {
+    margin-top: 2px;
+}
+table.ji-table-reqs td.cell-memo p.cell-memo-2 {
+    margin-top: 2px;
+    margin-bottom: 2px;
+    text-align: right;
+}
+
+/**
+ * 詳細ダイアログ
+ */
+#dtl-modal-1 h2,
+#dtl-modal-2 h2 {
+    font-size: 20px;
+    margin-top: 16px;
+    font-weight: bold;
+}
+
+#dtl-modal-1 h3,
+#dtl-modal-2 h3 {
+    font-size: 16px;
+    margin-top: 16px;    
+    font-weight: bold;
+}
+
+#dtl-modal-1 .modal-content {
+    max-height: 90vh;
+    overflow-y: scroll;
+}
+
+.dtl-details-item {
+    margin-bottom: 8px;
+}
+
+.dtl-details-label {
+    font-size: 95%;
+}
+
+.dtl-details-value {
+    margin-left: 24px;
+}
+
+.dtl-buttons a[href=""] {
+    display: none;
+    visibility: hidden;
+}
+
+.rv-req-time > .date,
+.rv-req-time > .time {
+    white-space: nowrap;
+}

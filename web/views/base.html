@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja" class="h-100">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ UI.Common.ServiceName }}</title>
+    <link rel="apple-touch-icon" sizes="256x256" href="/static/img/favicon256.png">
+    <link rel="apple-touch-icon" sizes="128x128" href="/static/img/favicon128.png">
+    <link rel="apple-touch-icon" sizes="96x96" href="/static/img/favicon96.png">
+    <link rel="apple-touch-icon" sizes="64x64" href="/static/img/favicon64.png">
+    <link rel="apple-touch-icon" sizes="48x48" href="/static/img/favicon48.png">
+    <link rel="apple-touch-icon" sizes="32x32" href="/static/img/favicon32.png">
+    <link rel="apple-touch-icon" sizes="16x16" href="/static/img/favicon16.png">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="16x16 32x32 48x48 64x64 96x96 128x128 256x256">
+    <!-- link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" -->
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/default.css">
+    <script src="https://kit.fontawesome.com/b3bbcf5bdc.js" crossorigin="anonymous"></script>
+{% if UI_LANG == 'ja' %}
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&family=Roboto&display=swap" rel="stylesheet">
+  <style type="text/css">
+  body {
+    font-family: 'Noto Sans JP', 'Roboto', sans-serif !important;
+  }
+  </style>
+{% endif %}
+{% if UI_LANG == 'zh_CN' %}
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC&family=Roboto&display=swap" rel="stylesheet">
+  <style type="text/css">
+  body {
+    font-family: 'Noto Sans SC', 'Roboto', sans-serif !important;
+  }
+  </style>
+{% endif %}
+{% if UI_LANG == 'zh_TW' %}
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC&family=Roboto&display=swap" rel="stylesheet">
+  <style type="text/css">
+  body {
+    font-family: 'Noto Sans TC', 'Roboto', sans-serif !important;
+  }
+  </style>
+{% endif %}
+{% if UI_LANG == 'en' %}
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <style type="text/css">
+  body {
+    font-family: 'Roboto', sans-serif !important;
+  }
+  </style>
+{% endif %}
+    <style type="text/css">
+.text-light a,
+.text-light a:visited,
+.text-light a:hover {
+    color: #fff;
+}
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+#loading-overlay {
+    background-color: #aaa;
+    opacity: 0.7;
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    cursor: progress;
+}
+#loading-overlay > .loading-symbol {
+  width: 240px;
+  height: 240px;
+  border: 8px solid #4f6fb8;
+  border-top: 8px solid #0f2c6e;
+  border-radius: 120px;
+  opacity: 1.0;
+  margin: auto;
+  padding: 0;
+  animation: spinner 1.5s linear infinite;
+}
+.ji-hidden {
+  visibility: hidden !important;
+  display: none !important;  
+}
+    </style>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="/js/common.js"></script>
+    {% block script_and_css %}
+    {% endblock %}
+  </head>
+
+<body>
+  {% block body %}
+  {% endblock %}
+
+  <div id="loading-overlay" class="ji-hidden">
+    <div class="loading-symbol"></div>
+  </div>
+
+  <!-- 汎用ダイアログ -->
+  <div id="infoDialog" class="d-none">
+    <div id="infoDialogBg">
+    </div>
+    <div id="infoDialogPopup">
+      <div class="idp-header">
+        <span class="title">NOTIFICATION</span>
+        <button type="button" class="ji-close text-btn">&times;</button>
+      </div>
+      <div class="idp-body">
+        <p></p>
+      </div>
+      <div class="idp-footer">
+        <button type="button" class="ji-btn ji-close">{{ UI.Pages.Common.TEXT000002 }}</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+$(window).on("load", (e) => {
+  $("#infoDialog button.ji-close").on("click", (e) => {
+    let dlg = $("#infoDialog");
+    dlg.find(".idp-body > p").text("");
+    dlg.addClass("d-none");
+  })
+});
+  </script>
+
+</body>
+</html>

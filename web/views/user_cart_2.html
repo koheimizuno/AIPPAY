@@ -1,0 +1,374 @@
+{% extends 'inside.html' %}
+
+{% block main_title %}
+{{ UI.Pages.Request.Cart.Title }}
+{% endblock %}
+
+{% block script_and_css %}
+{{ super() }}
+<style type="text/css">
+main {
+  padding-top: 86px;
+}
+.ji-table {
+  font-size: 14px;
+}
+.ji-table-total td {
+  padding-left: 32px;
+  padding-right: 32px;
+}
+.ji-table-total .sub-total-row {
+  background-color: #f0f0f0;
+}
+section.messages {
+  font-size: 14px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+section.messages > p {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+section.atena {
+  max-width: 900px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  padding: 0 0 24px 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+button.years {
+  background-color: #1e2188;
+  color: white;
+  border: none;
+  outline: none;
+  font-size: 12px;
+  padding: 2px;
+  min-width: 18px;
+  border-radius: 2px;
+  margin-left: 4px;
+}
+button.years + button.years {
+  margin-left: 2px;
+}
+button.tmclass {
+  background-color: #ddd;
+  color: white;
+  border: none;
+  outline: none;
+  font-size: 12px;
+  padding: 2px;
+  min-width: 18px;
+  border-radius: 0;
+  margin-left: 4px;
+  margin-right: 0;
+}
+button.tmclass + button.tmclass {
+  margin-left: 0;
+}
+button.tmclass:disabled {
+  background-color: #1e2188;
+}
+div.tmclass-edit div.tmclass-edit-item {
+  display: flex;
+}
+div.tmclass-edit div.tmclass-edit-item label {
+  min-width: 24px;
+}
+div.tmclass-edit div.tmclass-edit-item div.tmclass-buttons {
+  margin-left: auto;
+  margin-right: 0;
+}
+.tmclass-buttons,
+.jpgenmen-buttons {
+  white-space: nowrap;
+}
+button.jpgenmen {
+  background-color: #ddd;
+  color: white;
+  border: none;
+  outline: none;
+  font-size: 12px;
+  padding: 2px;
+  min-width: 18px;
+  border-radius: 0;
+  margin-left: 4px;
+  margin-right: 0;
+}
+button.jpgenmen + button.jpgenmen {
+  margin-left: 0;
+}
+button.jpgenmen:disabled {
+  background-color: #1e2188;
+}
+</style>
+{% endblock %}
+
+{% block main_contents %}
+
+{% if Targets is defined %}
+
+<form id="form1" method="post" action="/order/accept">
+
+<table class="ji-table ji-table-stripe">
+  <thead>
+    <tr>
+      <th scope="col">
+        {{ UI.Vocabulary.RegistrationNumber }}
+      </th>
+      <th scope="col">
+        {{ UI.Vocabulary.ManagementNumber }}
+      </th>
+      <th scope="col">
+        {{ UI.Vocabulary.RightHolder }}
+      </th>
+      <th scope="col">
+        {{ UI.Vocabulary.Subject }}
+      </th>
+      <th scope="col">
+        {{ UI.Pages.Request.TEXT000217 }}
+      </th>
+      <th scope="col">
+        {{ UI.Pages.Request.TEXT000218 }}
+      </th>
+      <th scope="col">
+        {{ UI.Pages.Request.TEXT000219 }}
+      </th>
+      <th scope="col">
+        {{ UI.Invoice.Content.OfficialFee }}
+      </th>
+      <th scope="col">
+        {{ UI.Invoice.Content.AgentFee }}
+      </th>
+      <th scope="col">
+        {{ UI.Pages.Request.TEXT000216 }}
+      </th>
+      <th>-</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for Target in Targets %}
+    <tr>
+      <td>
+        <span class="text-nowrap">{{ Target.LawName }}</span>
+        <span class="text-nowrap">{{ Target.RegistrationNumber }}</span>
+        <span class="text-nowrap">({{ Target.CountryDescription }})</span>
+      </td>
+      <td>
+        {{ Target.ManagementNumber }}
+      </td>
+      <td>
+        {{ Target.HolderNames }}
+      </td>
+      <td>
+        {{ Target.Subject }}
+      </td>
+      <td>
+        <p class="text-nowrap">
+          {{ Target.Cart.YearRangeText }}
+        {% if Target.Cart.Years > Target.Cart.MinYears %}
+          <button class="years" name="Action" value="years_dec_{{ Target._id }}">&minus;</button>
+        {% endif %}
+        {% if Target.Cart.Years < Target.Cart.MaxYears %}
+          <button class="years" name="Action" value="years_inc_{{ Target._id }}">&plus;</button>
+        {% endif %}
+        </p>
+      </td>
+      <td>
+        {% if Target.Law in ('Patent', 'Utility') %}
+          {{ UI.Pages.Request.TEXT000209 }} {{ Target.NumberOfClaims }}
+        {% elif Target.Law == 'Trademark' %}
+          {% if Target.Cart.CanDeleteClass %}
+            <p>{{ UI.Pages.Request.TEXT000215 }}</p>
+            <div class="tmclass-edit">
+              {% for c in Target.Classes %}
+              <div class="tmclass-edit-item">
+                <label>{{ c }}</label>
+                <div class="tmclass-buttons">
+                  <button class="tmclass" name="Action" value="tmclass_{{ Target._id }}_on_{{ c }}"{% if c in Target.Cart.Classes %} disabled{% endif %}>{{ UI.Pages.Request.TEXT000084 }}</button
+                    ><button class="tmclass" name="Action" value="tmclass_{{ Target._id }}_off_{{ c }}"{% if not c in Target.Cart.Classes %} disabled{% endif %}>{{ UI.Pages.Request.TEXT000085 }}</button
+                    >
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            {{ UI.Pages.Request.TEXT000215 }}
+            {% for c in Target.Cart.Classes %}{% if loop.index > 1 %}, {% endif %}{{ c }}{% endfor %}
+          {% endif %}
+        {% endif %}
+      </td>
+      <td>
+        <!-- 減免 -->
+        {% if Target.JpGenmenCandidate %}
+        <p class="text-nowrap">
+          {{ Target.JpGenmenCandidateText }}
+        </p>
+        <p class="jpgenmen-buttons">
+          <button class="jpgenmen" name="Action" value="jpgenmen_{{ Target._id }}_on"{% if Target.JpGenmen is defined %} disabled{% endif %}>{{ UI.Pages.Request.TEXT000220 }}</button
+            ><button class="jpgenmen" name="Action" value="jpgenmen_{{ Target._id }}_off"{% if not Target.JpGenmen is defined %} disabled{% endif %}>{{ UI.Pages.Request.TEXT000221 }}</button
+            >
+        </p>
+        {% endif %}
+      </td>
+      {% if Target.Cart.OfficialFee is defined %}
+      <td class="cell-currency">
+        {% if Target.Cart.AdditionalPeriod %}
+        <span class="badge badge-warning">{{ UI.Pages.Request.AdditionalPay }}</span>
+        {% endif %}
+        {{ Target.Cart.OfficialFee.AmountText }}
+        <span class="currency-unit">
+          {{ Target.Cart.OfficialFee.CurrencyLocal }}
+        </span>
+      </td>
+      <td class="cell-currency">
+        {{ Target.Cart.AgentFee.AmountText }}
+        <span class="currency-unit">
+          {{ Target.Cart.AgentFee.CurrencyLocal }}
+        </span>
+      </td>
+      <td class="cell-date">
+        {{ Target.NextProcedureLimit | date_format }}
+      </td>
+      {% else %}
+      <td class="text-center" colspan="2">
+        {{ UI.Pages.Request.NeedsEstimate }}
+      </td>
+      {% endif %}
+      <td>
+        <button class="flat-btn button-mini" name="Action" value="remove_{{ Target._id }}">{{ UI.Vocabulary.Delete }}</button>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<section class="messages">
+{% if HasAdditional %}
+<p>
+  <span class="badge badge-warning mr-1">{{ UI.Pages.Request.AdditionalPay }}</span>
+  {{ UI.Pages.Property.AdditionalComment }}
+</p>
+{% endif %}
+{% for Target in Targets %}
+{% if Target.Cart.ExpiringMessage is defined %}
+<p>
+  {{ Target.LawName }} {{ Target.RegistrationNumber }}: {{ Target.Cart.ExpiringMessage }}
+</p>
+{% endif %}
+{% endfor %}
+</section>
+
+<h2 class="h4 mt-4">{{ UI.Pages.Request.TEXT000002 }}</h2>
+{% if Totals is defined %}
+<table class="ji-table ji-table-total">
+  <thead>
+    <tr>
+      <th>{{ UI.Vocabulary.Item }}</th>
+      <th>{{ UI.Vocabulary.Price }}</th>
+      <th>{{ UI.Vocabulary.TaxRate }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for T in Totals %}
+    <tr class="{{ T.7 }}">
+      <td>{{ T.1 }}</td>
+      <td class="cell-currency">
+        <p>{{ T.3 }}<span class="currency-unit">{{ T.0 }}</span></p>
+        {% if CurrencyLocal != T.0 %}
+        <p>{{ T.5 }}<span class="currency-unit">{{ CurrencyLocal }}</span></p>
+        {% endif %}
+      </td>
+      <td>{{ T.2 }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2 class="h4 mt-4">{{ UI.Pages.Request.TEXT000001 }}</h2>
+{% if TotalAmount is defined %}
+<h2>{{ TotalAmountText }}<span class="currency-unit">{{ CurrencyLocal }}</span></h2>
+{% endif %}
+
+{% else %}
+<p>
+  {{ UI.Pages.Request.NeedsEstimate }}
+</p>
+{% endif %}
+
+  <div>
+    <section class="atena">
+      <h2 class="h4 mt-4">{{ UI.Pages.Request.TEXT000104 }}</h2>
+      <table class="user-table">
+          <tr>
+              <th>{{ UI.Pages.Request.TEXT000091 }}</th>
+              <td>
+                  <input type="text" name="Organization" value="{{ Organization }}" size="50"><br>
+                  ({{ UI.Pages.Request.TEXT000110 }})
+              </td>
+          </tr>
+          <tr>
+              <th>{{ UI.Pages.Request.TEXT000092 }}</th>
+              <td>
+                  <input type="text" name="UserName" value="{{ UserName }}" size="50">
+              </td>
+          </tr>
+      </table>
+    </section>
+  </div>
+
+  <input type="hidden" name="cdata" value="{{ cdata }}" />
+
+  {% if Message is defined %}
+  <p class="msg-alert">
+    {{ Message }}
+  </p>
+  {% endif %}
+
+  <p class="mt-3">
+    <button type="submit" id="subBtn1" name="Action" value="Request" role="button" class="flat-btn">
+      {{ UI.Pages.Request.TEXT000203 }}{{ UI.Pages.Request.TEXT000204 }}
+    </button>
+  </p>
+
+  <input type="hidden" name="_csrf" value="{{ _csrf }}" />
+
+</form>
+<!-- TODO: 追納に関するメッセージの表示 -->
+
+  {% if OtherAgents is defined %}
+  <div>
+    {% for oa in OtherAgents %}
+      <p>
+        <a href="/order/confirm/{{ oa.Agent }}/{{ oa.Category }}">{{ UI.Pages.Request.TEXT000213 }}{{ oa.AgentName }}{{ UI.Pages.Request.TEXT000212 }}</a>
+      </p>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+{% else %}
+
+<!-- 候補なし -->
+<p class="msg-alert">
+  {{ UI.Pages.Request.TEXT000210 }}
+</p>
+
+{% endif %}
+
+<p>
+  <a href="/kigen">{{ UI.Pages.Request.TEXT000211 }}</a>
+</p>
+
+{% endblock %}
+
+{% block bottom_script %}
+{{ super() }}
+<script type="text/javascript">
+$(window).on("load", (e) => {
+  $("#form1").on("submit", (e) => {
+    showLoadingOverlay();
+    return true;
+  });
+});
+</script>
+{% endblock %}

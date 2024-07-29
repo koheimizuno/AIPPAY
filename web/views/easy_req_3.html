@@ -1,0 +1,15 @@
+{% extends 'easy_page.html' %}
+
+{% block main_contents %}
+{{ super() }}
+{% if Messages is defined %}
+{% for Message in Messages %}
+<p>{{ Message }}</p>
+{% endfor %}
+{% endif %}
+
+<div class="form-container">
+{% include 'user_cart_3_contents.html' %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'inside.html' %}
+
+{% block main_title %}
+List View
+{% endblock %}
+
+{% block main_contents %}
+
+<p class="buttons buttons-right">
+    <a role="button" class="flat-btn" data-toggle="collapse" href="#Filters">
+      {{ UI.Vocabulary.Filter }}
+    </a>
+</p>
+
+<div class="ji-filters collapse {% if FilterShow %} show{% endif %}" id="Filters">
+  {% block filter_form %}{% endblock %}
+</div>
+
+<table class="ji-table ji-table-stripe" id="ji-tbl-main">
+  <thead>
+    {% block table_head %}{% endblock %}
+  </thead>
+  <tbody>
+    {% block table_rows %}{% endblock %}
+  </tbody>
+</table>
+
+{% if Page.Max > 1 %}
+<nav>
+  <ul class="pagination">
+    <li class="page-item">
+      <a class="page-link"
+        {% if Page.Current > 1%}href="{{ Page.Path }}/1"{% endif %}>
+        <i class="fas fa-angle-double-left"></i>
+      </a>
+    </li>
+    {% for p in range(1, Page.Max + 1) %}
+    {% if (p + 5) >= Page.Current and (p - 7) <= Page.Current %}
+    <li class="page-item{% if Page.Current == p %} active{% endif %}">
+      <a class="page-link"
+        {% if p != Page.Current %}href="{{ Page.Path }}/{{ p }}"{% endif %}>{{ p }}</a>
+    </li>
+    {% endif %}
+    {% endfor %}
+    <li class="page-item">
+      <a class="page-link"
+        {% if Page.Current < Page.Max %}href="{{ Page.Path }}/{{ Page.Max }}"{% endif %}>
+        <i class="fas fa-angle-double-right"></i>
+      </a>
+    </li>
+  </ul>
+</nav>
+{% endif %}
+
+{% block sub_contents_2 %}{% endblock %}
+
+{% endblock %}

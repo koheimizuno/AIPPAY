@@ -1,0 +1,31 @@
+{% extends 'direct_page.html' %}
+
+{% block main_contents %}
+{{ super() }}
+
+<dl>
+    <dt>{{ UI.Pages.Property.TEXT000161 }}</dt>
+    <dd>{{ RegistrationNumber }}</dd>
+    {% if ManagementNumber is defined %}
+    <dt>{{ UI.Pages.Request.TEXT000266 }}</dt>
+    <dd>{{ ManagementNumber }}</dd>
+    {% endif %}
+    <dt>{{ UI.Pages.Property.TEXT000162 }}</dt>
+    <dd>{{ HolderNames }}</dd>
+    <dt>{{ UI.Pages.Property.TEXT000163 }}</dt>
+    <dd>{{ Subject }} ({{ LawName }})</dd>
+    <dt>{{ UI.Pages.Property.TEXT000164 }}</dt>
+    <dd>{{ NextProcedureLimit | date_format }}</dd>
+</dl>
+
+<p>
+    {{ UI.Pages.Property.TEXT000019 | nl2br }}
+</p>
+<form method="POST" action="/d/silent">
+    <input type="hidden" id="key" name="key" value="{{ key }}">
+    <button type="submit" class="flat-btn">
+        {{ UI.Pages.Property.TEXT000020 }}
+    </button>
+</form>
+
+{% endblock %}

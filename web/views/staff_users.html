@@ -1,0 +1,315 @@
+{% extends 'inside.html' %}
+
+{% block script_and_css %}
+{{ super() }}
+<style type="text/css">
+main {
+  padding-top: 86px;
+}
+span.badge {
+  margin-right: 2px;
+}
+span.badge:last-child {
+  margin-right: 0;
+}
+</style>
+{% endblock %}
+
+{% block main_title %}
+{{ UI.Pages.User.Title }}
+{% endblock %}
+
+{% block main_contents %}
+
+<!-- p class="buttons buttons-right">
+  <a role="button" class="flat-btn" data-toggle="collapse" href="#Filters">
+    {{ UI.Vocabulary.Filter }}
+  </a>
+</p -->
+
+<div class="ji-filters collapse {% if FilterShow %} show{% endif %}" id="Filters">
+<form method="post" action="/s/users">
+
+  <div class="ji-form-container">
+
+    <div class="ji-form-item ji-form-item-v">
+      <label for="MailAddress">
+        {{ UI.Pages.User.TEXT000005 }}
+      </label>
+      <input type="text" id="MailAddress" name="MailAddress"
+        value="{{ Filters.MailAddress | escape }}" size="40" />
+    </div>
+
+    <div class="ji-form-item ji-form-item-v">
+      <label for="Name">
+        {{ UI.Pages.User.TEXT000004 }}
+      </label>
+      <input type="text" id="Name" name="Name"
+        value="{{ Filters.Name | escape }}" size="40" />
+    </div>
+
+    <div class="ji-form-item ji-form-item-v">
+      <label for="Grants">
+        {{ UI.Pages.User.TEXT000006 }}
+      </label>
+      <div id="ji-checkbox-group">
+        <label for="IsClient" class="ji-checkbox">
+          <input type="checkbox" name="IsClient" id="IsClient" value="1"
+            {% if Filters.IsClient %}checked="checked"{% endif %}/>
+          <span>
+            {{ UI.Role.User }}
+          </span>
+        </label>
+        <label for="IsStaff" class="ji-checkbox">
+          <input type="checkbox" name="IsStaff" id="IsStaff" value="1"
+            {% if Filters.IsStaff %}checked="checked"{% endif %}/>
+          <span>
+            {{ UI.Role.Staff }}
+          </span>
+        </label>
+        <label for="IsAdmin" class="ji-checkbox">
+          <input type="checkbox" name="IsAdmin" id="IsAdmin" value="1"
+            {% if Filters.IsAdmin %}checked="checked"{% endif %}/>
+          <span>
+            {{ UI.Role.Admin }}
+          </span>
+        </label>
+      </div>
+    </div>
+
+  </div>
+
+  <p class="buttons">
+    <button type="submit" name="Action" value="Filter" class="flat-btn">
+      {{ UI.Vocabulary.Apply }}
+    </button>
+  </p>
+
+</form>
+</div>
+
+<table class="ji-table ji-table-stripe" id="ji-tbl-main">
+  <thead>
+<tr>
+  <th scope="col" class="text-nowrap">
+    {{ UI.Pages.User.TEXT000005 }}
+  </th>
+  <th scope="col" class="text-nowrap">
+    {{ UI.Pages.User.TEXT000004 }}
+  </th>
+  <th scope="col" class="text-nowrap">
+    {{ UI.Pages.User.TEXT000003 }}
+  </th>
+  <th scope="col" class="text-center text-nowrap">
+    {{ UI.Pages.User.TEXT000006 }}
+  </th>
+  <th scope="col" class="text-nowrap">
+    {{ UI.Pages.User.TEXT000007 }}
+  </th>
+  <th />
+</tr>
+</thead>
+<tbody>
+{% for Id in Ids %}
+<tr id="row-{{ Id }}">
+  <td class="text-nowrap cell-addr">
+  </td>
+  <td class="text-truncate cell-name">
+  </td>
+  <td class="text-truncate cell-org">
+  </td>
+  <td class="text-center text-nowrap cell-roles">
+    <span class="badge badge-dark badge-staff">S</span>
+    <span class="badge badge-dark badge-admin">A</span>
+  </td>
+  <td class="text-nowrap cell-login">
+  </td>
+  <td>
+    <button type="button" class="flat-btn button-mini cell-btn-detail" value="{{ Id }}">
+      {{ UI.Vocabulary.Detail }}
+    </button>
+  </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+
+{% if Page.Max > 1 %}
+<nav>
+  <ul class="pagination">
+    <li class="page-item">
+      <a class="page-link"
+        {% if Page.Current > 1%}href="{{ Page.Path }}/1"{% endif %}>
+        <i class="fas fa-angle-double-left"></i>
+      </a>
+    </li>
+    {% for p in range(1, Page.Max + 1) %}
+    {% if (p + 5) >= Page.Current and (p - 7) <= Page.Current %}
+    <li class="page-item{% if Page.Current == p %} active{% endif %}">
+      <a class="page-link"
+        {% if p != Page.Current %}href="{{ Page.Path }}/{{ p }}"{% endif %}>{{ p }}</a>
+    </li>
+    {% endif %}
+    {% endfor %}
+    <li class="page-item">
+      <a class="page-link"
+        {% if Page.Current < Page.Max %}href="{{ Page.Path }}/{{ Page.Max }}"{% endif %}>
+        <i class="fas fa-angle-double-right"></i>
+      </a>
+    </li>
+  </ul>
+</nav>
+{% endif %}
+
+{% endblock %}
+
+{% block bottom_script %}
+{{ super() }}
+<!--詳細・編集ダイアログ -->
+<div class="modal fade" id="dlg1" tabindex="-1" role="dialog" aria-labelledby="dlDlgLbl" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="ulDlgLbl">
+          {{ UI.Pages.User.TEXT000002 }}
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+
+        <input type="hidden" class="dlg1-id">
+
+        <div class="ji-form-container">
+
+          <!-- 組織 -->
+          <div class="ji-form-item ji-form-item-v">
+            <label for="Organization">
+              {{ UI.Pages.User.TEXT000003 }}
+            </label>
+            <input type="text" id="Organization" class="dlg1-org" name="Organization" size="60">
+          </div>
+          
+          <!-- 名前 -->
+          <div class="ji-form-item ji-form-item-v">
+            <label for="Name">
+              {{ UI.Pages.User.TEXT000004 }}
+            </label>
+            <input type="text" id="Name" class="dlg1-name" name="Name" size="60">
+          </div>
+          
+          <!-- メールアドレス -->
+          <div class="ji-form-item ji-form-item-v">
+            <label for="MailAddress">
+              {{ UI.Pages.User.TEXT000005 }}
+            </label>
+            <input type="email" id="MailAddress" class="dlg1-addr" name="MailAddress" size="60">
+          </div>
+          
+          <!-- 権限 -->
+          <div class="ji-form-item ji-form-item-v">
+            <label>{{ UI.Pages.User.TEXT000006 }}</label>
+            <div class="ji-checkbox-group">
+              <label for="dlg1-is-client" class="ji-checkbox">
+                <input type="checkbox" id="dlg1-is-client" class="dlg1-is-client" checked disabled>
+                <span>
+                  {{ UI.Role.User }}
+                </span>
+              </label>
+              <label for="dlg1-is-staff" class="ji-checkbox">
+                <input type="checkbox" id="dlg1-is-staff" class="dlg1-is-staff">
+                <span>
+                  {{ UI.Role.Staff }}
+                </span>
+              </label>
+              <label for="dlg1-is-admin" class="ji-checkbox">
+                <input type="checkbox" id="dlg1-is-admin" class="dlg1-is-admin">
+                <span>
+                  {{ UI.Role.Admin }}
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <!-- メールアドレス -->
+          <div class="ji-form-item ji-form-item-v">
+            <label for="CcAddresses">
+              {{ UI.Pages.User.TEXT000001 }}
+            </label>
+            <div id="CcAddresses">
+              <p>
+                <input type="email" id="CcAddress_0" class="dlg1-cc-addr-0" name="CcAddress_0" size="60">
+              </p>
+              <p>
+                <input type="email" id="CcAddress_1" class="dlg1-cc-addr-1" name="CcAddress_1" size="60">
+              </p>
+              <p>
+                <input type="email" id="CcAddress_2" class="dlg1-cc-addr-2" name="CcAddress_2" size="60">
+              </p>
+            </div>
+          </div>
+                  
+        </div>
+      
+        <p class="buttons">
+          <button type="button" id="ji-btn-update" class="flat-btn">
+            {{ UI.Vocabulary.Update }}
+          </button>
+          <button type="button" id="ji-btn-delete" class="flat-btn button-deprecated">
+            {{ UI.Vocabulary.Delete }}
+          </button>
+        </p>
+      
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- 削除確認ダイアログ -->
+<div class="modal fade" id="dlg2" tabindex="-1" role="dialog" aria-labelledby="dlg2-title" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="dlg2-title">
+          CONFIRMINATION
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <p>
+          DELETE OK?
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <p class="buttons">
+        <button type="button" id="dlg2-btn-yes" class="flat-btn">
+          {{ UI.Vocabulary.Yes }}
+        </button>
+        <button type="button" id="dlg2-btn-no" class="flat-btn">
+          {{ UI.Vocabulary.No }}
+        </button>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+const initData = [
+  {% for data in Users %}
+    {% if loop.index > 1 %},{% endif %}{{ data | safe }}
+  {% endfor %}
+];
+</script>
+<script type="text/javascript" src="/js/staff_users.js"></script>
+{% endblock %}

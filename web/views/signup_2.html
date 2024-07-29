@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block script_and_css %}
+{{ super() }}
+<style type="text/css">
+div.article {
+  font-weight: bold;
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+
+  <h1 class="h2 mt-4 mb-3">
+    {{ UI.Pages.SignUp.Title }}
+  </h1>
+
+  {% if information is defined %}
+  <div class="alert alert-info alert-dismissible fade show" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="close">&times;</button>
+    {{ information | escape }}
+  </div>
+  {% endif %}
+
+  {% if alert is defined %}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="close">&times;</button>
+    {{ alert | escape }}
+  </div>
+  {% endif %}
+
+  <form method="post" action="/signup/c">
+    <div class="ji-form-item ji-form-item-v">
+      <label for="MailAddress">
+        {{ UI.Vocabulary.MailAddress }}
+      </label>
+      <input type="email" autocomplete="email" name="MailAddress" id="MailAddress" required="required"
+        value="{{ MailAddress | escape }}" readonly />
+    </div>
+    <div class="ji-form-item ji-form-item-v">
+      <label for="Password1">
+        {{ UI.Vocabulary.Password}}
+        <span class="badge badge-primary">{{ UI.Vocabulary.Required }}</span>
+      </label>
+      <input type="password" autocomplete="new-password" name="Password1" id="Password1" required="required" />
+    </div>
+    <div class="ji-form-item ji-form-item-v">
+      <label for="Password2">
+        {{ UI.Pages.SignUp.PasswordConfirm }}
+        <span class="badge badge-primary">{{ UI.Vocabulary.Required }}</span>
+      </label>
+      <input type="password" autocomplete="new-password" name="Password2" id="Password2" required="required" />
+    </div>
+    <div class="ji-form-item ji-form-item-v">
+      <label for="Name">
+        {{ UI.Vocabulary.Name }}
+        <span class="badge badge-primary">{{ UI.Vocabulary.Required }}</span>
+      </label>
+      <input type="text" autocomplete="name" name="Name" id="Name" required="required"
+        value="{{ Name | escape }}" />
+    </div>
+    <div class="ji-form-item ji-form-item-v">
+      <label for="Organization">
+        {{ UI.Vocabulary.Organization }}
+      </label>
+      <input type="text" autocomplete="organization" name="Organization" id="Organization"
+        value="{{ Organization | escape }}" />
+    </div>
+    <div class="ji-form-item ji-form-item-v">
+      <label for="Language">
+        {{ UI.Vocabulary.Language }}
+      </label>
+      <select id="Language" name="Language" required>
+        {% if Language == 'en' %}
+        <option value="en" selected>
+          {{ UI.Language.en }}
+        </option>
+        {% else %}
+        {% if Language == 'zh_CN' %}
+        <option value="zh_CN" selected>
+          {{ UI.Language.zh_CN }}
+        </option>
+        {% else %}
+        {% if Language == 'zh_TW' %}
+        <option value="zh_TW" selected>
+          {{ UI.Language.zh_TW }}
+        </option>
+        {% else %}
+        <option value="ja" selected>
+          {{ UI.Language.ja }}
+        </option>
+        {% endif %}{% endif %}{% endif %}
+      </select>
+    </div>
+
+    <div class="ji-form-item ji-form-item-v">
+      <label for="Currency">
+        {{ UI.Vocabulary.Currency }}
+      </label>
+      <select id="Currency" name="Currency" required>
+        <option value="JPY" selected>
+          {{ UI.Currency.JPY }} (JPY)
+        </option>
+      </select>
+    </div>
+
+    <div class="card mt-4 mb-2" style="height:35vh;">
+      <div class="card-header">
+        {{ UI.Vocabulary.Contract }}
+      </div>
+      <div style="height:45vh;" class="card-body overflow-auto font-smaller">
+        {{ Contract | safe }}
+      </div>
+    </div>
+    <div class="form-check">
+      <input type="checkbox" class="form-check-input" name="Confirm" id="Confirm1" value="1" required="required" />
+      <label class="form-check-label" for="Confirm1">
+        {{ UI.Pages.SignUp.Confirmed }}
+      </label>
+    </div>
+
+    <div class="ji-command-group">
+      <button type="submit" name="Action" id="Action" value="Register"
+        class="flat-btn">
+        {{ UI.Vocabulary.Register }}
+      </button>
+    </div>
+
+    <input type="hidden" name="Secrets" id="Secrets" value="{{ Secrets }}" />
+    <input type="hidden" name="_csrf" value="{{ _csrf }}" />
+
+  </form>
+</div>
+{% endblock %}
+
+{% block bottom_script %}
+{{ super() }}
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/iScroll/5.2.0/iscroll.min.js"></script>
+<script type="text/javascript">
+$(window).on('load', function (e) {
+  $('#Password1').tooltip({triger:'focus', title:'{{ UI.Common.PasswordHint }}'});
+});
+</script>
+{% endblock %}

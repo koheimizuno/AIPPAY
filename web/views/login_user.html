@@ -1,0 +1,70 @@
+{% extends 'inside.html' %}
+
+{% block script_and_css %}
+{{ super() }}
+<style type="text/css">
+main {
+  display: flex;
+  flex-direction: column;
+  padding-top: 90px;
+}
+main > form {
+  min-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+main > form > * {
+  margin-bottom: 32px;
+}
+</style>
+{% endblock %}
+
+{% block main_title %}
+{{ UI.Pages.User.Title }}
+{% endblock %}
+
+{% block main_contents %}
+<form method="post" action="/newuser">
+
+  <p>{{ UI.Pages.LogIn.TEXT000011 }}</p>
+
+  <div class="ji-form-item ji-form-item-v">
+    <label for="MailAddress">
+      {{ UI.Vocabulary.MailAddress }}
+    </label>
+    <input type="email" name="MailAddress" id="MailAddress" value="{{ MailAddress | escape }}" readonly>
+  </div>
+
+  <div class="ji-form-item ji-form-item-v">
+    <label for="Name">
+      {{ UI.Vocabulary.Name }}
+    </label>
+    <input type="text" name="Name" value="{{ Name | escape }}"
+      autocomplete="name">
+  </div>
+
+  <div class="ji-form-item ji-form-item-v">
+    <label for="Organization">
+      {{ UI.Vocabulary.Organization }}
+    </label>
+    <input type="text" name="Organization" value="{{ Organization | escape }}"
+      autocomplete="organization">
+  </div>
+
+  {% if Message is defined %}
+  <p>{{ Message }}</p>
+  {% endif %}
+  {% if Alert is defined %}
+  <p class="msg-alert">{{ Alert }}</p>
+  {% endif %}
+
+  <p class="buttons">
+    <button type="submit" name="Action" value="Register" class="flat-btn">
+      {{ UI.Pages.LogIn.TEXT000004 }}
+    </button>
+  </p>
+
+  <input type="hidden" name="_csrf" value="{{ _csrf }}" />
+
+</form>
+{% endblock %}

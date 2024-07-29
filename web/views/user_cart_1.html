@@ -1,0 +1,358 @@
+{% extends 'inside.html' %}
+
+{% block script_and_css %}
+{{ super() }}
+<style type="text/css">
+main {
+  padding-top: 86px;
+}
+.btn-plain {
+  background-color: transparent;
+  border: none;
+  border-width: 0;
+}
+div.target-block {
+  width: 98%;
+  margin-left: auto;
+  margin-right: auto;
+  border: solid 1px #e0e0e0;
+  margin-bottom: 24px;
+  padding: 16px;
+}
+h2.cat-title {
+  margin-top: 16px;
+  margin-bottom: 16px;
+  font-size: 24px;
+}
+p.go-next {
+  margin-top: 24px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+p.go-next .first-limit {
+  margin-left: 16px;
+}
+</style>
+{% endblock %}
+
+{% block main_title %}
+{{ UI.Pages.Request.Cart.Title }}
+{% endblock %}
+
+{% block main_contents %}
+
+{% for Key in Keys %}
+<div class="target-block">
+<h2 class="cat-title">
+  {{ Key.CategoryMessage }}
+</h2>
+<table class="ji-table ji-table-stripe">
+  <thead>
+    <tr>
+      <th scope="col">
+        {{ UI.Vocabulary.RegistrationNumber }}
+      </th>
+      <th scope="col">
+        {{ UI.Vocabulary.ManagementNumber }}
+      </th>
+      <th scope="col">
+        {{ UI.Vocabulary.RightHolder }}
+      </th>
+      <th scope="col">
+        {{ UI.Vocabulary.Subject }}
+      </th>
+      <th scope="col">
+        {{ UI.Pages.Request.ProcedureDetails }}        
+      </th>
+      <th scope="col">
+        {{ UI.Vocabulary.ProcedureLimit }}
+      </th>
+      <th scope="col">
+        {% if Key.Category == 'Request' %}
+          {{ UI.Pages.Request.OfficialFee }}
+        {% else %}
+          -
+        {% endif %}
+      </th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for Property in Candidates[Key.Agent][Key.Category] %}
+    <tr id="row_{{ Property._id }}">
+      <td>
+          {{ Property.LawName }}
+          {{ Property.RegistrationNumber }}
+          ({{ Property.CountryDescription }})
+      </td>
+      <td>
+          {{ Property.ManagementNumber }}
+      </td>
+      <td>
+          {{ Property.HolderNames | escape }}
+      </td>
+      <td>
+          {{ Property.Subject | escape }}
+      </td>
+      <td>
+          {% if Property.Country == 'JP' and Property.Law == 'Trademark' %}
+          <!-- Japan - Trademark -->
+          <div class="ji-detial-item">
+              <p class="ji-detail-item-title">{{ UI.Pages.Request.PayingYears }}</p>
+              <div class="ji-detail-item-content">
+              <p>
+                  <span id="y_{{ Property._id }}" class="payingYears">{{ Property.Cart.YearRangeText }}</span>
+                  <button class="btn-dec btn-plain" value="{{ Property._id }}"
+                  {% if Property.Cart.Years <= Property.Cart.MinYear %}disabled{% endif %}>
+                      &minus;
+                  </button>
+                  <button class="btn-inc btn-plain" value="{{ Property._id }}"
+                  {% if Property.Cart.Years >= Property.Cart.MaxYear %}disabled{% endif %}>
+                      &plus;
+                  </button>
+              </p>
+              {% if Property.Cart.ExpiringMessage is defined %}
+                  <p class="p-exp text-muted font-extra-smaller  mt-1 mb-1">
+                  {{ Property.Cart.ExpiringMessage | nl2br }}
+                  </p>
+              {% endif %}
+              </div>
+          </div>
+          <div class="ji-detial-item">
+              <p class="ji-detail-item-title">{{ UI.Pages.Request.ClassForUpdate }}</p>
+              <div class="ji-detail-item-content">
+              {% for c in Property.Classes %}
+              <label for="edc_{{ Property._id }}_{{ c }}" class="ji-checkbox tcls">
+                  {% if Property.Cart.CanDeleteClass %}
+                  <input type="checkbox" id="edc_{{ Property._id }}_{{ c }}" class="" value="{{ c }}"{% if c in Property.Cart.Classes %} checked{% endif %}>
+                  {% endif %}
+                  <span>{{ c }}</span>
+              </label>
+              {% endfor %}
+              </div>
+          </div>
+          {% elif Property.Country == 'JP' and Property.Law in ('Patent', 'Utility', 'Design') %}
+          <!-- Japan - Patent, Utility or Design -->
+          <div class="ji-detail-item">
+              <p class="ji-detail-item-title">{{ UI.Pages.Request.YearRange }}</p>
+              <div class="ji-detail-item-content" id="yr_{{ Property._id }}">
+              <span class="YearRangeText">{{ Property.Cart.YearRangeText }}</span>
+              <button class="btn-dec btn-plain" value="{{ Property._id }}"
+                  {% if Property.Cart.Years <= Property.Cart.MinYear %}disabled{% endif %}>
+                  &minus;
+              </button>
+              <button class="btn-inc btn-plain" value="{{ Property._id }}"
+                  {% if Property.Cart.Years >= Property.Cart.MaxYear %}disabled{% endif %}>
+                  &plus;
+              </button>
+              {% if Property.ExpiringMessage is defined %}
+                  <p class="p-exp text-muted font-extra-smaller  mt-1 mb-1">
+                  {{ Property.ExpiringMessage | nl2br }}
+                  </p>
+              {% endif %}
+              </div>
+          </div>
+      </td>
+      <td>
+          {{ Property.Cart.NextProcedureLimit | date_format }}
+      </td>
+      <td>
+          {% if Key.Category == 'Request' %}
+          <span id="of_{{ Property._id }}">{{ Property.Cart.OfficialFeeText }}</span>
+          <span id="of_{{ Property._id }}">{{ Property.Cart.OfficialFeeCurrency }}</span>
+          {% if Property.Cart.AdditionalPeriod %}
+          <span class="text-danger font-extra-smaller">{{ UI.Pages.Request.AdditionalPrice }}</span>
+          {% endif %}
+          {% elif Key.Category == 'Invalid' %}
+            {{ Property.RequestWarning }}
+          {% endif %}
+      </td>
+      <td class="text-center">
+      <button type="button" value="{{ Property._id }}"
+          class="ji-btn ji-btn-mini btn-remove">
+          <span class="d-none d-lg-inline font-extra-smaller">
+              {{ UI.Vocabulary.Delete }}
+          </span>
+          </button>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<p class="go-next">
+  <a role="button" class="ji-btn" href="/order/confirm/{{ Key.Agent }}/{{ Key.Category }}">
+    {{ UI.Pages.Request.GoToRequest }}
+  </a>
+  <span class="first-limit">
+    {{ UI.Pages.Request.FirstProcedureLimit }}
+    {{ Key.FirstLimit | date_format }}
+  </span>
+</p>
+</div>
+{% endfor %}
+
+{% if IsEmpty %}
+<p class="is-empty">
+  {{ UI.Pages.Request.Empty }}
+</p>
+{% endif %}
+
+<p class="mt-3 mb-3">
+  <a role="button" class="pl-3 pr-3 text-muted" href="/props">
+    <i class="fas fa-backward mr-1"></i>
+    {{ UI.Pages.Request.GoBack }}
+  </a>
+</p>
+{% endblock %}
+
+{% block bottom_script %}
+{{ super() }}
+<script type="text/javascript">
+/**
+ * 納付年分を変更する
+ */
+function updateYears(e, y) {
+  let elem = $(e.currentTarget);
+  let id = elem.val();
+  $.ajax({
+    url: '/api/order/year', type: 'POST', dataType: 'json',
+    data: { id: id, dir: y, _csrf: '{{ _csrf }}' }
+  })
+  .done(data => {
+    if (data.result) {
+      $("#y_" + id).text(data.years);
+      if (data.years >= data.maxYear) {
+        elem.parent().find('.btn-inc').prop('disabled', true);
+      } else {
+        elem.parent().find('.btn-inc').prop('disabled', false);
+      }
+      if (data.years <= data.minYear) {
+        elem.parent().find('.btn-dec').prop('disabled', true);
+      } else {
+        elem.parent().find('.btn-dec').prop('disabled', false);
+      }
+      if (data.expiring) {
+        elem.parents('td').find('.p-exp').removeClass('d-none');
+      } else {
+        elem.parents('td').find('.p-exp').addClass('d-none');
+      }
+      if (data.yearRangeText) {
+        $("#yr_" + id + " .YearRangeText").text(data.yearRangeText);
+      } else {
+        $("#yr_" + id + " .YearRangeText").text("");
+      }
+      if (data.officialFeeText) {
+        $("#of_" + id).text(data.officialFeeText);
+      } else {
+        $("#of_" + id).text("");
+      }
+    }
+  });
+}
+
+/**
+ * 対象を削除
+ */
+function deleteTarget(id) {
+  $.ajax({
+    url: '/api/order/remove', type: 'POST', dataType: 'json',
+    data: { id: id, _csrf: '{{ _csrf }}' }
+  })
+  .done(data => {
+    if (data.result) {
+      window.location.href = '/ready';
+    }
+  });
+}
+
+$(window).on("load", e => {
+  $("#subBtn1").on("click", e2 => {
+    $("#push").empty();
+    let elems = $("input.years");
+    for(let i = 0; i < elems.length; i++) {
+      let h = $("<input type=\"hidden\">");
+      let s = elems[i].getAttribute("name");
+      h.prop("name", "ready_" + s.substring(6));
+      s = elems[i].getAttribute("value");
+      h.prop("value", s);
+      $("#push").append(h);
+    }
+    $("#form1").submit();
+  });
+
+  // 削除ボタン
+  $(".btn-remove").on("click", e => {
+    let elem = $(e.currentTarget);
+    let id = elem.val();
+    deleteTarget(id);
+  });
+
+  // 年分の増減ボタン
+  $(".btn-inc").on("click", e => {
+    updateYears(e, 1);
+  });
+  $(".btn-dec").on("click", e => {
+    updateYears(e, -1);
+  });
+
+  // 更新対象の区分を切り替え
+  $('.tcls input[type="checkbox"]').on("click", e => {
+
+    // ターゲット要素の特定
+    let target = $(e.currentTarget);
+    let cell = target.parents("td").eq(0);
+    let row = cell.parents("tr").eq(0);
+
+    // 権利のidを取得
+    let id = row.find(".btn-remove").eq(0).val();
+
+    // 現在のターゲットの状態から操作を特定する
+    let act = target.prop("checked") ? "on" : "off";
+
+    // ターゲットの区分を取得
+    let cls = target.val();
+
+    // パラメーターの指定
+    let p = { 
+      id: id,
+      action: act,
+      _class: cls,
+      _csrf: '{{ _csrf }}'
+    };
+
+    // 区分選択の変更をリクエスト
+    $.ajax({
+      url: '/api/order/cls', type: 'POST', dataType: 'json',
+      data: p
+    })
+    .done((data) => {
+
+      // 成功した場合は区分の表示を更新
+      if (data.result) {
+
+        // 庁料金の表示を更新
+        if (data.officialFeeText) {
+          row.find("#of_" + id).text(data.officialFeeText);
+        } else {
+          row.find("#of_" + id).text("");
+        }
+
+      } else {
+        target.prop("checked", !(act == "on"));
+        console.log(data.message);
+      }
+
+    })
+    .fail((jqXHR, textStatus, errorThrown) => {
+        if (jqXHR.status == 401) {
+            window.location.href = "/login";
+            return;
+        }
+        console.log(textStatus);
+    });
+
+  });
+
+});
+</script>
+{% endblock %}

@@ -1,0 +1,221 @@
+{% extends 'direct_page.html' %}
+
+{% block main_contents %}
+{{ super() }}
+
+<div class="form-container">
+<table>
+    <tr>
+        <th>
+            {{ UI.Vocabulary.Country }}
+        </th>
+        <td>
+            {{ CountryDescription }}
+        </td>
+    </tr>
+    <tr>
+        <th>
+            {{ UI.Vocabulary.LawKind }}
+        </th>
+        <td>
+            {{ LawName }}
+        </td>
+    </tr>
+    <tr>
+        <th>
+            {{ UI.Vocabulary.RegistrationNumber }}
+        </th>
+        <td>
+            {{ RegistrationNumber }}
+        </td>
+    </tr>
+    {% if ApplicationNumber is defined %}
+    <tr>
+        <th>
+            {{ UI.Vocabulary.ApplicationNumber }}
+        </th>
+        <td>
+            {{ ApplicationNumber }}
+        </td>
+    </tr>
+    {% endif %}
+    {% if ManagementNumber is defined %}
+    <tr>
+        <th>
+            {{ UI.Vocabulary.ManagementNumber }}
+        </th>
+        <td>
+            {{ ManagementNumber }}
+        </td>
+    </tr>
+    {% endif %}
+    {% if PctNumber is defined %}
+    <tr>
+        <th>
+            {{ UI.Vocabulary.PctNumber }}
+        </th>
+        <td>
+            {{ PctNumber }}
+        </td>
+    </tr>
+    {% endif %}
+    {% if PriorNumber is defined %}
+    <tr>
+        <th>
+            {{ UI.Vocabulary.PriorNumber }}
+        </th>
+        <td>
+            {% for p in PriorNumber %}{% if loop.index > 1 %}<br>{% endif %}{{ p }}{% endfor %}
+        </td>
+    </tr>
+    {% endif %}
+    {% if Subject is defined %}
+    <tr>
+        <th>
+            {{ UI.Vocabulary.Subject }}
+        </th>
+        <td>
+            {{ Subject }}
+        </td>
+    </tr>
+    {% endif %}
+    {% if ExamClaimedDate is defined %}
+    <tr>
+        <th>
+            {{ UI.Vocabulary.ExamClaimedDate }}
+        </th>
+        <td>
+            {{ ExamClaimedDate | date_format }}
+        </td>
+    </tr>
+    {% endif %}
+    {% if RegistrationDate is defined %}
+    <tr>
+        <th>
+            {{ UI.Vocabulary.RegistrationDate }}
+        </th>
+        <td>
+            {{ RegistrationDate | date_format }}
+        </td>
+    </tr>
+    {% endif %}
+    {% if ExpirationDate is defined %}
+    <tr>
+        <th>
+            {{ UI.Vocabulary.ExpirationDate }}
+        </th>
+        <td>
+            {{ ExpirationDate | date_format }}
+        </td>
+    </tr>
+    {% endif %}
+    {% if NumberOfClaims is defined %}
+    <tr>
+        <th>
+            {{ UI.Vocabulary.NumberOfClaims }}
+        </th>
+        <td>
+            {{ NumberOfClaims }}
+        </td>
+    </tr>
+    {% endif %}
+    {% if Classes is defined %}
+    <tr>
+        <th>
+            {{ UI.Vocabulary.NumberOfClaims }}
+        </th>
+        <td>
+            {{ Classes }}
+        </td>
+    </tr>
+    {% endif %}
+    {% if PaidYears is defined %}
+    <tr>
+        <th>
+            {{ UI.Vocabulary.PaidYears }}
+        </th>
+        <td>
+            {{ PaidYears }}
+        </td>
+    </tr>
+    {% endif %}
+    {% if HolderNames is defined %}
+    <tr>
+        <th>
+            {{ UI.Vocabulary.RightHolder }}
+        </th>
+        <td>
+            {{ HolderNames }}
+        </td>
+    </tr>
+    {% endif %}
+    {% if JpGenmen is defined %}
+    <tr>
+        <th>
+            {{ UI.Pages.Property.TEXT000005 }}
+        </th>
+        <td>
+            {{ JpGenmen }}
+        </td>
+    </tr>
+    {% endif %}
+    {% if UsEntity is defined %}
+    <tr>
+        <th>
+            {{ UI.Vocabulary.USEntity }}
+        </th>
+        <td>
+            {{ UsEntity }}
+        </td>
+    </tr>
+    {% endif %}
+</table>
+
+{% if NextProcedureLimit is defined %}
+<h2>{{ UI.Pages.Property.TEXT000012 }}</h2>
+<table>
+    <tr>
+        <th>
+            {{ UI.Vocabulary.NextProcedureLimit }}
+        </th>
+        <td>
+            {{ NextProcedureLimit | date_format }}
+        </td>
+    </tr>
+    {% if AdditionalPeriod %}
+    <tr>
+        <th>
+            -
+        </th>
+        <td>
+            {{ UI.Pages.Property.TEXT000009 }}
+        </td>
+    </tr>
+    {% endif %}
+    {% if NextOfficialFee is defined %}
+    <tr>
+        <th>
+            {{ UI.Pages.Property.TEXT000013 }}
+        </th>
+        <td>
+            <span class="price">{{ NextOfficialFee }}</span>
+            <span class="currency-unit">{{ Currency }}</span>
+        </td>
+    </tr>
+    {% endif %}
+    {% if NextAgentFee is defined %}
+    <tr>
+        <th>
+            {{ UI.Pages.Property.TEXT000014 }}
+        </th>
+        <td>
+            <span class="price">{{ NextAgentFee }}</span>
+            <span class="currency-unit">{{ AgentFeeCurrency }}</span>
+        </td>
+    </tr>
+    {% endif %}
+</table>
+{% endif %}
+</div>
+
+{% endblock %}

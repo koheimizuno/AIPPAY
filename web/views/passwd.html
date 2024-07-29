@@ -1,0 +1,53 @@
+{% extends 'inside.html' %}
+
+{% block main_title %}
+Change Password
+{% endblock %}
+
+{% block main_contents %}
+<form id="form1" method="post" action="/pwd">
+
+  {% if HasPassword %}
+  <div class="ji-form-item ji-form-item-v">
+    <label for="Password">
+      {{ UI.Pages.Passwd.CurrentPasswd }}
+    </label>
+    <input type="password" name="Password" id="Password" required="required" />
+  </div>
+  {% endif %}
+
+  <div class="ji-form-item ji-form-item-v">
+    <label for="NewPassword1">
+      {{ UI.Pages.Passwd.NewPasswd }}
+    </label>
+    <input type="password" name="NewPassword1" id="NewPassword1" required="required"
+      autocomplete="new-password" />
+  </div>
+
+  <div class="ji-form-item ji-form-item-v">
+    <label for="NewPassword2">
+      {{ UI.Pages.Passwd.NewPasswdConfirm }}
+    </label>
+    <input type="password" name="NewPassword2" id="NewPassword2" required="required"
+      autocomplete="new-password" />
+  </div>
+
+  <p class="mt-4">
+    <button type="submit" name="Action" value="Register" class="flat-btn">
+      {{ UI.Vocabulary.Update }}
+    </button>
+  </p>
+
+  <input type="hidden" name="_csrf" value="{{ _csrf }}" />
+
+</form>
+{% endblock %}
+
+{% block bottom_script %}
+{{ super() }}
+<script type="text/javascript">
+$(window).on('load', function (e) {
+  $('#NewPassword1').tooltip({triger:'focus', title:'{{ UI.Common.PasswordHint }}'});
+});
+</script>
+{% endblock %}

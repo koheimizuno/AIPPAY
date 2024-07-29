@@ -1,0 +1,191 @@
+{% extends 'inside.html' %}
+
+{% block script_and_css %}
+{{ super() }}
+<style type="text/css">
+main {
+  padding-top: 86px;
+}
+table#ji-table-reqs {
+  font-size: 14px;
+}
+table#ji-table-reqs tbody tr td {
+  vertical-align: top;  
+}
+table#ji-table-reqs tbody tr.row-even {
+  background-color: #fafafa;
+}
+tr.row-primary {
+  border-top: 1px solid #888;
+}
+</style>
+{% endblock %}
+
+{% block main_title %}
+{{ UI.Pages.Request.Title }}
+{% endblock %}
+
+{% block main_contents %}
+{{ super() }}
+<table class="ji-table" id="ji-table-reqs">
+  <thead>
+    <tr>
+      <th>{{ UI.Pages.Request.TEXT000004 }}</th>
+      <th>{{ UI.Pages.Request.TEXT000044 }}</th>
+      <th>{{ UI.Pages.Request.TEXT000069 }}</th>
+      <th>{{ UI.Pages.Request.TEXT000023 }}</th>
+      <th>{{ UI.Pages.Request.TEXT000024 }}</th>
+      <th>{{ UI.Pages.Request.TEXT000025 }}</th>
+      <th>{{ UI.Pages.Request.TEXT000005 }}</th>
+      <th>{{ UI.Pages.Request.TEXT000026 }}</th>
+      <th>-</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for Id in Ids %}
+      {% set Idx=loop.index %}
+      {% for Prop in range(0, Id.Props) %}
+    <tr id="row-{{ Id.Id }}-{{ Prop }}" class="row-{{ Id.Id }} {% if Prop == 0 %}row-primary{% else %}row-sub{% endif %} {% if (Idx % 2) == 0 %}row-even{% else %}row-odd{% endif %}">
+      {% if Prop == 0 %}
+      <td class="cell-date cell-req-date" rowspan="{{ Id.Props }}"></td>
+      {% endif %}
+      <td class="cell-props">
+        <!-- 登録番号 -->
+      </td>
+      <td class="cell-subject">
+        <!-- 名称 -->
+      </td>
+      <td class="cell-currency cell-official-fee">
+        <!-- 特許庁印紙代 -->
+      </td>
+      <td class="cell-currency cell-agent-fee">
+        <!-- 事務所料金 -->
+      </td>
+      <td class="cell-currency cell-total-fee">
+        <!-- 小計金額 -->
+      </td>
+      {% if Prop == 0 %}
+      <td class="cell-currency cell-amount-fee" rowspan="{{ Id.Props }}">
+        <!-- 請求金額 -->
+      </td>
+      {% endif %}
+      <td class="cell-status">
+        <!-- ステータス -->
+      </td>
+      <td>
+        <!-- 詳細 -->
+        <button type="button" class="flat-btn button-mini cell-btn-detail" value="{{ Id.Id }}-{{ Prop }}">
+          {{ UI.Vocabulary.Detail }}
+        </button>
+      </td>
+    </tr>
+      {% endfor %}
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if Page.Max > 1 %}
+<nav class="mt-2 mb-2">
+  <ul class="pagination">
+    <li class="page-item">
+      <a class="page-link"
+        {% if Page.Current > 1%}href="{{ Page.Path }}/1"{% endif %}>
+        <i class="fas fa-angle-double-left"></i>
+      </a>
+    </li>
+    {% for p in range(1, Page.Max + 1) %}
+    {% if (p + 5) >= Page.Current and (p - 7) <= Page.Current %}
+    <li class="page-item{% if Page.Current == p %} active{% endif %}">
+      <a class="page-link"
+        {% if p != Page.Current %}href="{{ Page.Path }}/{{ p }}"{% endif %}>{{ p }}</a>
+    </li>
+    {% endif %}
+    {% endfor %}
+    <li class="page-item">
+      <a class="page-link"
+        {% if Page.Current < Page.Max %}href="{{ Page.Path }}/{{ Page.Max }}"{% endif %}>
+        <i class="fas fa-angle-double-right"></i>
+      </a>
+    </li>
+  </ul>
+</nav>
+{% endif %}
+
+<div class="modal fade" id="dlg1" tabindex="-1" role="dialog" aria-labelledby="dlg1-title" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="dlg1-title">
+          <span class="dlg1-req-num"></span>
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <ul class="ji-blocklist">
+          <li>
+            <div class="ji-label-content-item">
+              <div class="label">{{ UI.Pages.Request.TEXT000019 }}</div>
+              <div class="content dlg1-subject"></div>
+            </div>
+          </li>
+        </ul>
+        <ul class="ji-blocklist">
+          <li>
+            <div class="ji-label-content-item">
+              <div class="label">{{ UI.Pages.Request.TEXT000004 }}</div>
+              <div class="content dlg1-req-time"></div>
+            </div>
+          </li>
+          <li>
+            <div class="ji-label-content-item">
+              <div class="label">{{ UI.Pages.Request.TEXT000026 }}</div>
+              <div class="content dlg1-status"></div>
+            </div>
+          </li>
+        </ul>
+        <ul class="ji-blocklist">
+          <li>
+            <div class="ji-label-content-item">
+              <div class="label">{{ UI.Pages.Request.TEXT000021 }}</div>
+              <ul class="content dlg1-procs"></ul>
+            </div>
+          </li>
+        </ul>
+
+        <ul class="ji-blocklist dlg1-price-area"></ul>
+        <div class="dlg1-others-area">
+          <p>
+            {{ UI.Pages.Request.TEXT000208 }}
+          </p>
+          <ul></ul>
+        </div>
+        <ul class="ji-blocklist dlg1-amount-area">
+          <li>
+            <div class="ji-label-content-item">
+              <div class="label">{{ UI.Pages.Request.TEXT000005 }}</div>
+              <div class="content dlg1-amount"></div>
+            </div>
+          </li>
+        </div>
+        <ul id="dlg1-dllist">
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block bottom_script %}
+{{ super() }}
+<script type="text/javascript">
+const initData = [
+  {% for data in Requests %}
+    {% if loop.index > 1 %},{% endif %}{{ data | safe }}
+  {% endfor %}
+];
+</script>
+<script type="text/javascript" src="/js/user_reqs.js"></script>
+{% endblock %}

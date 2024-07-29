@@ -1,0 +1,91 @@
+<p>
+  {{ UI.Common.NamePrefix }}
+  {% if Organization is defined %}{{ Organization }}<br>{% endif %}
+  {{ UserName }} {{ UI.Common.NameSuffix }}
+</p>
+<div class="thanks-area">
+  <div class="thanks-left">
+
+    <p>{{ UI.Pages.Request.TEXT000196 }}</p>
+
+    <div class="thanks-stamp only-sp">
+      <img src="/static/img/kansha_stamp.png">
+    </div>  
+
+    {% if HasInvoice %}
+    <p class="msg-alert">
+      {{ UI.Pages.Request.TEXT000197 | nl2br }}
+    </p>
+    <div>
+      <!-- 入金期限 -->
+      <p>
+        {{ UI.Pages.Request.TEXT000198 }}:
+        {% if PayLimit is defined %}{{ PayLimit | date_format }}{% else %}{{ UI.Pages.Request.TEXT000199 }}{% endif %}
+      </p>
+      {% if DeleteClassAlert %}
+      <p class="msg-alert">
+        {{ UI.Pages.Request.TEXT000207 }}
+      </p>
+      {% endif %}
+      <!--
+      <p class="mt-3 mb-1">
+        {{ UI.Pages.Request.PleasePay | nl2br }}
+      </p>
+      -->
+      <p>
+        <a role="button" href="{% if DirectParameter is defined %}/d/req/invoice/?t={{ DirectParameter }}{% else %}/reqs/api/invoice/{{ RequestId }}{% endif %}" class="ji-btn">
+          {{ UI.Pages.Request.DownloadInvoice }}
+        </a>
+      </p>
+    </div>
+  {% else %}
+    <p>
+      {{ UI.Pages.Request.EstimateNotice | nl2br }}
+    </p>
+  {% endif %}
+
+    {% if NeedsDelegation %}
+    <div>
+      <p class="mt-3 mb-1">
+        {{ UI.Pages.Request.NeedsDelegation | nl2br }}
+      </p>
+      <p class="mt-1 mb-2">
+        <a role="button" href="{% if DirectParameter is defined %}/d/req/pp/1/?t={{ DirectParameter }}{% else %}/reqs/api/pp/1/{{ RequestId }}{% endif %}" class="ji-btn">
+          {{ UI.Pages.Request.DownloadDelegation }}
+        </a>
+      </p>
+    </div>
+    {% endif %}
+
+    {% if NeedsAbandonment %}
+    <div>
+      <p class="mt-3 mb-1">
+        {{ UI.Pages.Request.NeedsAbandonment | nl2br }}
+      </p>
+      <p class="mt-1 mb-2">
+        <a role="button" href="{% if DirectParameter is defined %}/d/req/pp/2/?t={{ DirectParameter }}{% else %}/reqs/api/pp/2/{{ RequestId }}{% endif %}" class="ji-btn">
+          {{ UI.Pages.Request.DownloadAbandonment }}
+        </a>
+      </p>
+    </div>
+    {% endif %}
+
+    {% if NeedsDelegation or NeedsAbandonment %}
+    <div class="send-to-address-box">
+      <p>{{ UI.Vocabulary.PostDestination }}</p>
+      <p>{{ UI.Pages.Request.PaperDestination | nl2br }}</p>
+    </div>
+    {% endif %}
+
+    <!-- 連絡先 -->
+    <p>
+      {{ UI.Pages.Request.TEXT000113 | nl2br }}
+    </p>
+
+    </div>
+    <div class="thanks-stamp only-pc">
+      <img src="/static/img/kansha_stamp.png">
+    </div>
+  
+  </div>
+

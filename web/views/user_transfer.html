@@ -1,0 +1,28 @@
+{% extends 'inside.html' %}
+
+{% block main_title %}
+{{ UI.Pages.User.TEXT000012 }}
+{% endblock %}
+
+{% block main_contents %}
+<form method="post" action="/user/transfer">
+
+  <p>{{ UI.Pages.User.TEXT000010 }}</p>
+
+  <div class="ji-form-item ji-form-item-v">
+    <label for="MailAddress">
+      {{ UI.Vocabulary.MailAddress }}
+    </label>
+    <input type="email" name="MailAddress" id="MailAddress" value="{{ MailAddress | escape }}"
+      required="required" autocomplete="email" />
+  </div>
+
+  <div class="ji-command-group">
+    <button type="submit" name="Action" value="Register" class="flat-btn">
+      {{ UI.Pages.User.TEXT000011 }}
+    </button>
+  </div>
+
+</form>
+
+{% endblock %}

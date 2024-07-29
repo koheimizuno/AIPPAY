@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+
+{% block script_and_css %}
+{{ super() }}
+<style type="text/css">
+/**
+ * main
+ */
+main {
+  width: 100vw;
+  margin: 0;
+  padding: 64px 32px 32px 32px;
+}
+
+/**
+ * footer
+ */
+footer {
+  background-color: #efefef;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 36px;
+  padding-right: 36px;
+}
+footer,
+footer a {
+  color: #555;
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<body class="d-flex flex-column h-100">
+
+  <header class="user-header">
+    <div class="user-header-left">
+      <button type="button" class="text-button" id="open-popup-menu">
+        <i class="fas fa-bars"></i>
+      </button>
+      <img src="/static/img/logo_200.png" alt="{{ UI.Common.ServiceName }}" width="200" height="30">
+    </div>
+    <div class="user-header-center">
+      {% block main_title %}{% endblock %}
+    </div>
+    <div class="user-header-right">
+    </div>
+  </header>
+
+  <div id="popup-menu-1" class="popup-menu popup-menu-hidden">
+    <section class="popup-menu-s1">
+      <p class="buttons-right">
+        <button type="button" class="text-button" id="close-popup-menu">
+          <i class="fas fa-times"></i>
+        </button>
+      </p>
+      <p>
+        <img src="/static/img/logo_200.png" alt="{{ UI.Common.ServiceName }}">
+      </p>
+    </section>
+    <section class="popup-menu-s2">
+      <nav>
+        <ul>
+          <li><a href="/kigen">{{ UI.Menu.KigenKanri }}</a></li>
+          <li><a href="/reqs">{{ UI.Menu.OrderList }}</a></li>
+          {% if is_staff %}
+          <hr>
+          <li>
+            <a href="#" role="button">
+              {{ UI.Vocabulary.Request }} [{{ UI.Vocabulary.Administrator }}]
+            </a>
+          </li>
+          <li>
+            <ul>
+              <li>
+                <a href="/s/reqs">
+                  {{ UI.Menu.Accept }}
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="#" role="button">
+              {{ UI.Vocabulary.IntellectualProperty }} [{{ UI.Vocabulary.Administrator }}]
+            </a>
+          </li>
+          <li>
+            <ul>
+              <li>
+                <a href="/s/kigen">
+                  {{ UI.Menu.KigenKanri }}
+                </a>
+              </li>
+              <!-- li>
+                <a href="/s/props">
+                  {{ UI.Menu.AllProperties }}
+                </a>
+              </li -->
+              <li>
+                <a href="/import">
+                {{ UI.Menu.Import }}
+                </a>
+              </li>
+            </ul>
+          </li>
+          <hr>
+          <li>
+            <a href="#" role="button">
+              {{ UI.Vocabulary.User }} [{{ UI.Vocabulary.Administrator }}]
+            </a>
+          </li>
+          <li>
+            <ul>
+              <li>
+                <a href="/s/users">
+                  {{ UI.Menu.AllUsers }}
+                </a>
+              </li>
+            </ul>
+          </li>
+          {% endif %}
+          <li>
+            <a href="#" role="button">
+              {{ user_name | escape }}
+            </a>
+          </li>
+          <li>
+            <ul>
+              <li><a href="/me">{{ UI.Menu.UserInfo }}</a></li>
+              <li><a href="/pwd">{{ UI.Menu.ChangePassword }}</a></li>
+              <li><a href="/user/transfer">{{ UI.Menu.Transfer }}</a></li>
+              <li><a href="/bye">{{ UI.Vocabulary.LogOut }}</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </section>
+  </div>
+
+  <main role="main" class="flex-shrink-0">
+
+      {% if information is defined %}
+      <div class="alert alert-info alert-dismissible fade show mt-1 mb-1" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="close">&times;</button>
+        {{ information | escape }}
+      </div>
+      {% endif %}
+
+      {% if alert is defined %}
+      <div class="alert alert-danger alert-dismissible fade show mt-1 mb-1" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="close">&times;</button>
+        {{ alert | escape }}
+      </div>
+      {% endif %}
+
+      {% block main_contents %}{% endblock %}
+
+  </main>
+
+  <footer class="footer mt-auto font-smaller">
+    &copy;2023 {{ UI.Common.ProviderName }}
+  </footer>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/iScroll/5.2.0/iscroll.min.js"></script>
+<script type="text/javascript">
+$(document).ready(() => {
+  $("#open-popup-menu").on("click", (e) => {
+    $("#popup-menu-1").removeClass("popup-menu-hidden");
+  });
+  $("#close-popup-menu").on("click", (e) => {
+    $("#popup-menu-1").addClass("popup-menu-hidden");
+  });
+});
+</script>
+{% block bottom_script %}{% endblock %}
+{% endblock %}

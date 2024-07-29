@@ -1,0 +1,33 @@
+{% extends 'inside.html' %}
+
+{% block main_title %}
+{{ UI.Pages.Request.Cart.Title }}
+{% endblock %}
+
+{% block script_and_css %}
+{{ super() }}
+<style type="text/css">
+main {
+  padding-top: 86px;
+}
+main > .card {
+  max-width: 1000px;
+}
+</style>
+{% endblock %}
+
+{% block main_contents %}
+
+<div class="card mx-auto">
+  <div class="card-body">
+
+    {% include 'user_cart_3_contents.html' %}
+
+  </div>
+</div>
+
+<p>
+  <a href="/kigen">{{ UI.Pages.Request.TEXT000211 }}</a>
+</p>
+
+{% endblock %}

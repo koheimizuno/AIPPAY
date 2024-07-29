@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="container">
+
+  <form id="form1" method="post" action="/pwd/reset">
+    <div class="mx-auto col-11 col-md-6 col-lg-6 mt-5 card">
+      <div class="card-body">
+        <h1 class="h3 mb-5">
+          {{ UI.Pages.Passwd.ResetTitle }}
+        </h1>
+        <div class="ji-form-item ji-form-item-v">
+          <label for="MailAddress">
+            {{ UI.Vocabulary.MailAddress }}
+          </label>
+          <input type="email" name="MailAddress" id="MailAddress"
+            autocomplete="email" required="required" value="{{ MailAddress | escape }}" />
+        </div>
+
+        {% if alert is defined %}
+        <div class="alert alert-danger alert-dismissible fade show mt-2 mb-2" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="close">&times;</button>
+          {{ alert | escape }}
+        </div>
+        {% endif %}
+
+        <p class="mt-2 mb-2">
+          <button type="button" id="button1" name="Action" value="Send" class="flat-btn" disabled>
+            {{ UI.Pages.Passwd.GenUrl }}
+          </button>
+        </p>
+
+        {% if information is defined %}
+        <div class="alert alert-info alert-dismissible fade show mt-2 mb-2" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="close">&times;</button>
+          {{ information | escape }}
+        </div>
+        {% endif %}
+
+        <p class="mt-3">
+          <a href="/" role="button" class="flat-btn">
+            {{ UI.Common.GoToHome }}
+          </a>
+        </p>
+
+      </div>
+    </div>
+
+    <input type="hidden" id="recaptchaResponse" name="recaptchaResponse" />
+    <input type="hidden" name="_csrf" value="{{ _csrf }}" />
+
+  </form>
+
+</div>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/iScroll/5.2.0/iscroll.min.js"></script>
+<script src="https://www.google.com/recaptcha/api.js?render=6LdHGdMZAAAAAP5tSScZ2ZNOe_Am7nq7hI7pPLXd"></script>
+<script type="text/javascript">
+grecaptcha.ready(function() {
+  $('#button1').prop('disabled', false);
+  $('#button1').on('click', function(e) {
+    if ($('#form1')[0].reportValidity()) {
+      grecaptcha.execute('6LdHGdMZAAAAAP5tSScZ2ZNOe_Am7nq7hI7pPLXd', {action: 'homepage'}).then(function(token) {
+        $('#recaptchaResponse').val(token);
+        $('#form1').submit();
+      });
+    }
+  });
+});
+</script>
+{% endblock %}

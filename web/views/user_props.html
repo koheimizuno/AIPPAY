@@ -1,0 +1,618 @@
+{% extends 'inside.html' %}
+
+{% block script_and_css %}
+{{ super() }}
+<style type="text/css">
+div#navCart {
+  position: fixed;
+  top: 5px;
+  right: 16px;
+  background-color: #ffeeee;
+  border: 1px solid #a55;
+  padding: 8px;
+  vertical-align: middle;
+  color: #000;
+  z-index: 401;
+}
+div#navCart a {
+  color: #000;
+}
+span#cartCount {
+  position: relative;
+  left: -4px;
+  border: 1px solid #a55;
+}
+i#cartIcon {
+  font-size: 24px;
+}
+div.prop-card dl dt {
+  font-weight: normal;
+  font-size: 85%;
+  color: #555;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.prop-card dl dd {
+  margin-left: 1.0rem;
+}
+span.required {
+  color: #aa0000;
+  font-size: 110%;
+  font-weight: bold;
+}
+table.props {
+  border-collapse: separate;
+  border-spacing: 2px;
+  font-size: 14px;
+  min-width: 1200px;
+}
+table.props tr.tr_Patent td {
+  background-color: #ebfcff;
+  color: #000000;
+}
+table.props tr.tr_Patent td:first-child {
+  background-color: #00115c;
+  color: #ffffff;
+}
+table.props tr.tr_Utility td {
+  background-color: #f1ffeb;
+  color: #000000;
+}
+table.props tr.tr_Utility td:first-child {
+  background-color: #013b07;
+  color: #ffffff;
+}
+table.props tr.tr_Design td {
+  background-color: #fff8eb;
+  color: #000000;
+}
+table.props tr.tr_Design td:first-child {
+  background-color: #5c3700;
+  color: #ffffff;
+}
+table.props tr.tr_Trademark td {
+  background-color: #ffebff;
+  color: #000000;
+}
+table.props tr.tr_Trademark td:first-child {
+  background-color: #70005f;
+  color: #ffffff;
+}
+span.ap-badge {
+  cursor: pointer;
+}
+#sc_qry_w {
+  border-bottom: 1px #999999 solid;
+  padding: 8px 0;
+  margin-right: 8px;
+}
+#sc_qry {
+  border-bottom: none !important;
+}
+#sc_qry_c {
+  cursor: pointer;
+}
+#ed_reg_btn {
+  margin-right: 8px;
+}
+#ed_sourceurl_area > p {
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+#ed_sourceurl_area a {
+  font-size: 12px;
+  white-space: nowrap;
+}
+</style>
+{% endblock %}
+
+{% block main_title %}
+  {{ UI.Pages.Property.Title }}
+{% endblock %}
+
+{% block main_contents %}
+<div class="ji-form-container">
+    <div class="ji-form-item">
+        <span id="sc_qry_w" class="">
+          <input type="text" id="sc_qry" size="30" value="{% if Filters is defined %}{{ Filters.q }}{% endif %}">
+          <span id="sc_qry_c">&times;</span>
+        </span>
+        <button type="button" id="sc_btn" class="flat-btn">
+          {{ UI.Vocabulary.Search }}
+        </button>
+    </div>
+    <div class="ji-form-item">
+      <span class="">
+        <label for="st" class="">
+          {{ UI.Pages.Property.Sort }}
+        </label>
+        <select id="st">
+          <option value="1"{% if Sort == '1' %} selected{% endif %}>{{ UI.Vocabulary.NextProcedureLimit }}</option>
+          <option value="2"{% if Sort == '2' %} selected{% endif %}>{{ UI.Vocabulary.LawKind }}</option>
+          <option value="4"{% if Sort == '4' %} selected{% endif %}>{{ UI.Vocabulary.RightHolder }}</option>
+          <option value="5"{% if Sort == '5' %} selected{% endif %}>{{ UI.Vocabulary.RegistrationNumber }}</option>
+        </select>
+      </span>
+    </div>
+    <div class="ji-form-item ji-form-item-r">
+        <button id="addButton" class="flat-btn">
+          <i class="fas fa-plus mr-1"></i>
+          {{ UI.Pages.Property.Add }}
+        </button>
+    </div>
+
+  </div>
+</div>
+
+{% if Props | length < 1 %}
+<div class="alert alert-info alert-dismissible fade show mt-2 mb-4" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="close">&times;</button>
+  {{ UI.Pages.Property.NoProperty }}
+</div>
+{% endif %}
+
+{% if Props | length > 0 %}
+<table class="props ji-table ji-table-stripe" id="tbl-props">
+  <thead>
+    <tr>
+      <th scope="col">{{ UI.Vocabulary.LawKind }}</th>
+      <th scope="col">{{ UI.Vocabulary.RegistrationNumber }}</th>
+      <th scope="col">{{ UI.Vocabulary.ManagementNumber }}</th>
+      <th scope="col">{{ UI.Vocabulary.Country }}</th>
+      <th scope="col">{{ UI.Vocabulary.PctNumber }}<br>{{ UI.Vocabulary.PriorNumber }}</th>
+      <th scope="col">{{ UI.Vocabulary.RightHolder }}</th>
+      <th scope="col">{{ UI.Vocabulary.Subject }}</th>
+      <th scope="col">{{ UI.Vocabulary.ExpirationDate }}</th>
+      <th scope="col">{{ UI.Vocabulary.NextProcedureLimit }}</th>
+      <th scope="col">{{ UI.Vocabulary.YearForPay }}</th>
+      <th scope="col">{{ UI.Pages.Property.NextOfficialFee }}</th>
+      <th scope="col">&nbsp;</th>
+      <th scope="col">&nbsp;</th>
+      <th scope="col">&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <tr class="tr_1">
+      <td class="cell-law no-break">
+      </td>
+      <td class="cell-reg-num no-break">
+      </td>
+      <td class="cell-management-num no-break">
+      </td>
+      <td class="cell-country no-break">
+      </td>
+      <td class="cell-pct no-break">
+        <p class="pct">
+        </p>
+        <p class="prior">
+        </p>
+      </td>
+      <td class="cell-holder">
+      </td>
+      <td class="cell-subject">
+      </td>
+      <td class="cell-expiration cell-date no-break">
+      </td>
+      <td class="cell-limit cell-date">
+        <p class="limitdate">
+        </p>
+        <p class="additional d-none">
+          <span class="badge badge-primary ap-badge">
+          {{ UI.Pages.Property.TEXT000009 }}
+          </span>
+        </p>
+        <p class="hurry d-none">
+          <span class="badge badge-warning ap-badge">
+          {{ UI.Pages.Property.TEXT000017 }}
+          </span>
+        </p>
+      </td>
+      <td class="cell-year no-break">
+      </td>
+      <td class="cell-fee cell-currency">
+        <p class="fee fee-orig no-break">
+          <span class="price"></span>
+          <span class="currency-unit"></span>
+        </p>
+        <p class="fee fee-ex no-break">
+          <span class="price"></span>
+          <span class="currency-unit"></span>
+        </p>
+      </td>
+      <td class="cell-btn1">
+        <!-- 詳細ボタン -->
+        <button class="editBtn flat-btn button-mini">
+          {{ UI.Pages.Property.TEXT000002 }}
+        </button>
+      </td>
+      <td class="cell-btn2  no-break">
+        <!-- カート追加ボタン -->
+        <button class="cartBtn flat-btn button-mini">
+          {{ UI.Pages.Property.TEXT000003 }}
+        </button>
+        <p class="p-cannot-cart mt-1 mb-1 font-extra-smaller"></p>
+      </td>
+      <td class="cell-btn3 no-break">
+        <!-- 削除ボタン -->
+        <button class="btn-abandon flat-btn button-mini">
+          {{ UI.Pages.Property.TEXT000004 }}
+        </button>
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+
+{% if Page.Max > 1 %}
+<nav>
+  <ul class="pagination">
+    <li class="page-item">
+      <a class="page-link"
+        {% if Page.Current > 1%}href="{{ Page.Path }}/1?rstr"{% endif %}>
+        <i class="fas fa-angle-double-left"></i>
+      </a>
+    </li>
+    {% for p in range(1, Page.Max + 1) %}
+    {% if (p + 5) >= Page.Current and (p - 7) <= Page.Current %}
+    <li class="page-item{% if Page.Current == p %} active{% endif %}">
+      <a class="page-link"
+        {% if p != Page.Current %}href="{{ Page.Path }}/{{ p }}?rstr"{% endif %}>{{ p }}</a>
+    </li>
+    {% endif %}
+    {% endfor %}
+    <li class="page-item">
+      <a class="page-link"
+        {% if Page.Current < Page.Max %}href="{{ Page.Path }}/{{ Page.Max }}?rstr"{% endif %}>
+        <i class="fas fa-angle-double-right"></i>
+      </a>
+    </li>
+  </ul>
+</nav>
+{% endif %}
+{% endif %}
+
+<div class="modal fade" id="editDialog" tabindex="-1" role="dialog" aria-labelledby="editDialogLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editDialogLabel">
+          {{ UI.Vocabulary.Edit }}
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <input type="hidden" name="Action" value="Edit">
+          <div class="ji-form-container">
+
+            <div class="ji-form-item ji-form-item-v">
+              <label class="" for="ed_cnt">
+                {{ UI.Vocabulary.Country }}
+                <span class="required">*</span>
+              </label>
+              <div class="">
+                <select id="ed_cnt" class="">
+                  <option value="JP" selected>{{ UI.Country.JP }}</option>
+                </select>
+                <input type="hidden" id="ed_cnt_unk" class="d-none">
+              </div>
+            </div>
+
+            <div class="ji-form-item ji-form-item-v">
+              <label class="" for="ed_laws">
+                {{ UI.Vocabulary.LawKind }}
+                <span class="required">*</span>
+              </label>
+              <div id="ed_laws" class="ji-checkbox-group">
+                <label for="ed_law_Patent" class="ji-checkbox">
+                  <input type="radio" id="ed_law_Patent" name="ed_law" class="" value="Patent" checked>
+                  <span>{{ UI.Law.Patent }}</span>
+                </label>
+                <label for="ed_law_Utility" class="ji-checkbox">
+                  <input type="radio" id="ed_law_Utility" name="ed_law" class="" value="Utility">
+                  <span>{{ UI.Law.Utility }}</span>
+                </label>
+                <label for="ed_law_Design" class="ji-checkbox">
+                  <input type="radio" id="ed_law_Design" name="ed_law" class="" value="Design">
+                  <span>{{ UI.Law.Design }}</span>
+                </label>
+                <label for="ed_law_Trademark" class="ji-checkbox">
+                  <input type="radio" id="ed_law_Trademark" name="ed_law" class="" value="Trademark">
+                  <span>{{ UI.Law.Trademark }}</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="ji-form-item ji-form-item-v">
+              <label for="ed_regn" class="">
+                {{ UI.Vocabulary.RegistrationNumber }}
+                <span class="required">*</span>
+              </label>
+              <input type="text" id="ed_regn" name="RegistrationNumber" class="ed_txt"
+                placeholder="{{ UI.Pages.Property.Hint.RegistrationNumber }}">
+            </div>
+
+            <div class="ji-form-item ji-form-item-v">
+              <label for="ed_appn" class="">
+                {{ UI.Vocabulary.ApplicationNumber }}
+              </label>
+              <input type="text" id="ed_appn" name="ApplicationNumber" class="ed_txt"
+                placeholder="{{ UI.Pages.Property.Hint.ApplicationNumber }}">
+            </div>
+
+            <div class="ji-form-item ji-form-item-v">
+              <label for="ed_pct" class="">
+                {{ UI.Vocabulary.ManagementNumber }}
+              </label>
+              <input type="text" id="ed_mgtn" class="ed_txt">
+            </div>
+
+          </div>
+
+          <div class="text-center">
+            <button class="flat-btn" id="ed_refer">{{ UI.Pages.Property.ReferToDB }}</button>
+          </div>
+
+          <div class="ji-form-container" id="ed_details">
+
+            <div class="ji-form-item ji-form-item-v ar-form var-form-pct">
+              <label for="ed_pct">
+                {{ UI.Vocabulary.PctNumber }}
+                <span class="required">*</span>
+              </label>
+              <input type="text" id="ed_pct" class="ed_txt" readonly>
+            </div>
+
+            <div class="ji-form-item ji-form-item-v">
+              <label for="ed_pri" class="form-label">
+                {{ UI.Vocabulary.PriorNumber }}
+                <span class="required">*</span>
+              </label>
+              <textarea id="ed_pri" class="ed_txt" rows="1" readonly></textarea>
+            </div>
+
+            <div class="ji-form-item ji-form-item-v">
+              <label for="ed_sjt" class="form-label">
+                {{ UI.Vocabulary.Subject }}
+                <span class="required">*</span>
+              </label>
+              <input type="text" id="ed_sjt" class="ed_txt" size="50" readonly>
+            </div>
+
+            <div class="ji-form-item ji-form-item-v">
+              <label for="ed_procd" class="form-label">
+                {{ UI.Vocabulary.NextProcedureLimit }}
+                <span class="required">*</span>
+              </label>
+              <input type="date" id="ed_procd" class="ed_txt" readonly>
+            </div>
+
+            <!-- 出願日 -->
+            <div class="ji-form-item ji-form-item-v var-form var-form-appd">
+              <label for="ed_appd" class="form-label">
+                {{ UI.Vocabulary.ApplicationDate }}
+              </label>
+              <input type="date" id="ed_appd" class="ed_txt" readonly>
+            </div>
+
+            <!-- 審査請求日 -->
+            <div class="ji-form-item ji-form-item-v var-form var-form-exmd">
+              <label for="ed_exmd" class="form-label">
+                {{ UI.Vocabulary.ExamClaimedDate }}
+              </label>
+              <input type="date" id="ed_exmd" class="ed_txt" readonly>
+            </div>
+
+            <!-- 登録査定日 -->
+            <div class="ji-form-item ji-form-item-v var-form var-form-reginvd">
+              <label for="ed_reginvd" class="form-label">
+                {{ UI.Vocabulary.RegistrationInvestigatedDate }}
+              </label>
+              <input type="date" id="ed_reginvd" class="ed_txt" readonly>
+            </div>
+
+            <!-- 設定登録料納付日 -->
+            <div class="ji-form-item ji-form-item-v var-form var-form-rpayd">
+              <label for="ed_rpayd" class="form-label">
+                {{ UI.Vocabulary.RegistrationPaymentDate }}
+              </label>
+              <input type="date" id="ed_rpayd" class="ed_txt" readonly>
+            </div>
+
+            <!-- 更新登録料納付日 -->
+            <div class="ji-form-item ji-form-item-v var-form var-form-npayd">
+              <label for="ed_npayd" class="form-label">
+                {{ UI.Vocabulary.RenewPaymentDate }}
+              </label>
+              <input type="date" id="ed_npayd" class="ed_txt" readonly>
+            </div>
+
+            <div class="ji-form-item ji-form-item-v">
+              <label for="ed_regd" class="form-label">
+                {{ UI.Vocabulary.RegistrationDate }}
+              </label>
+              <input type="date" id="ed_regd" class="ed_txt" readonly>
+            </div>
+
+            <div class="ji-form-item ji-form-item-v">
+              <label for="ed_expd">
+                {{ UI.Vocabulary.ExpirationDate }}
+              </label>
+              <input type="date" id="ed_expd" class="ed_txt" readonly>
+            </div>
+
+            <div class="ji-form-item ji-form-item-v var-form var-form-clms">
+              <label for="ed_clms" class="form-label">
+                {{ UI.Vocabulary.NumberOfClaims }}
+              </label>
+              <input type="number" id="ed_clms" class="ed_txt" min="1" step="1" readonly>
+            </div>
+
+            <div class="ji-form-item ji-form-item-v var-form var-form-clss">
+              <label for="ed_clss" class="form-label">
+                {{ UI.Vocabulary.Classes }}
+                <span class="required">*</span>
+              </label>
+              <input type="text" id="ed_clss" class="ed_txt" readonly>
+            </div>
+
+            <div class="ji-form-item ji-form-item-v var-form var-form-py">
+              <label for="ed_py">
+                {{ UI.Vocabulary.PaidYears }}
+              </label>
+              <input type="number" id="ed_py" class="ed_txt" min="1" step="1" readonly>
+            </div>
+
+            <div class="ji-form-item ji-form-item-v">
+              <label for="ed_hld">
+                {{ UI.Vocabulary.RightHolder }}
+              </label>
+              <div id="ed_hld">
+                <div class="ed_hld_set">
+                  <input type="text" class="ed_hld_id" size="20" maxlength="10" readonly>
+                  <input type="text" class="ed_hld_nm" size="45" readonly>
+                  <button type="button" class="flat-btn button-mini ed_hld_rm d-none">&times;</button>
+                </div>
+                <p id="ed_hld_adp" class="d-none">
+                  <button type="button" class="flat-btn button-mini" id="ed_hld_ad">&plus;</button>
+                </p>
+              </div>
+            </div>
+
+            <div class="ji-form-item ji-form-item-v var-form var-form-dft d-none">
+              <label for="ed_dft" class="ji-checkbox">
+                <input type="checkbox" class="" id="ed_dft">
+                <span>{{ UI.Vocabulary.DefensiveMark }}</span>
+              </label>
+            </div>
+
+            <div class="ji-form-item ji-form-item-v var-form">
+              <label for="ed_silent" class="ji-checkbox">
+                <input type="checkbox" class="" id="ed_silent">
+                <span>{{ UI.Pages.Property.TEXT000010 }}</span>
+              </label>
+            </div>
+
+          </div>
+
+          <p id="ed_msg" class="text-warning"></p>
+
+          <div class="ji-command-group">
+            <input type="hidden" id="ed_id">
+            <button id="ed_reg_btn" class="flat-btn">
+              {{ UI.Vocabulary.Register }}
+            </button>
+            <button id="ed_del_btn" class="flat-btn">
+              {{ UI.Vocabulary.Delete }}
+            </button>
+        </div>
+
+        <div id="ed_sourceurl_area">
+          <p>{{ UI.Pages.Property.TEXT000016 }}</p>
+          <p><a id="ed_sourceurl_link" href="" target="_blank"></a></p>
+          <input type="hidden" id="ed_sourceurl" class="ed_txt">
+        </div>
+
+        <input type="hidden" id="ed_refered" class="ed_txt">
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 汎用ダイアログ -->
+<div class="modal fade" id="dlgGen" tabindex="-1" role="dialog" aria-labelledby="dlgGenLbl" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="dlgGenLbl">
+          Note
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12" id="dlgGenMsg"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- 放棄ダイアログ -->
+<div class="modal fade" id="dlg-abandon" tabindex="-1" role="dialog" aria-labelledby="lbl-abandon" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="lbl-abandon">
+          {{ UI.Vocabulary.Abandon }}
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="container-fluid">
+          <p>
+            {{ UI.Pages.Property.ConfirmAbandonment }}
+          </p>
+          <p class="text-warning" id="dlg-abandon-msg">
+          </p>
+          <input type="hidden" id="dlg-abandon-id">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" id="btn-abandon-yes" class="ji-btn mr-2">
+          {{ UI.Vocabulary.Yes }}
+        </button>
+        <button type="button" id="btn-abandon-no" class="ji-btn">
+          {{ UI.Vocabulary.No }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="navCart">
+  <div>
+    <a href="/order/confirm/0001/Request">
+      <i class="fas fa-shopping-cart" id="cartIcon"></i>
+      <span id="cartCount" class="badge badge-pill badge-warning">0</span>
+      {{ UI.Pages.Property.GoToRequest }}
+    </a>
+  </div>
+</div>
+<form id="q" class="d-none" action="/props" method="post">
+  <input type="hidden" name="_csrf" value="{{ _csrf }}">
+  <input type="hidden" id="q_q" name="q" value="">
+  <input type="hidden" id="q_s" name="s" value="{{ Sort }}">
+  <input type="hidden" id="q_ss" name="ss" value="{{ SortSeq }}">
+</form>
+{% endblock %}
+
+{% block bottom_script %}
+{{ super() }}
+<script type="text/javascript">
+const csrfToken = '{{ _csrf }}';
+const initData = [
+  {% for p in Props %}
+  {% if loop.index > 1 %},{% endif %}{{ p | safe }}
+  {% endfor %}
+];
+const specId = {% if SpecId is defined %}"{{ SpecId }}"{% else %} undefined{%endif %};
+</script>
+<script type="text/javascript" src="/js/user_props.js"></script>
+{% endblock %}

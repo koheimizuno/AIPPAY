@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="container">
+
+  <form id="form1" method="post" action="/pwd/reset/c">
+
+    <div class="mx-auto col-11 col-md-6 col-lg-6 mt-5 card">
+      <div class="card-body">
+        <h1 class="h3 mb-5">
+          {{ UI.Pages.Passwd.ResetPasswdTitle }}
+        </h1>
+        <div class="ji-form-item ji-form-item-v">
+          <label for="NewPassword1">
+            {{ UI.Pages.Passwd.NewPasswd }}
+          </label>
+          <input type="password" name="NewPassword1" id="NewPassword1" required="required"
+            autocomplete="new-password" />
+        </div>
+        <div class="ji-form-item ji-form-item-v">
+          <label for="NewPassword2">
+            {{ UI.Pages.Passwd.NewPasswdConfirm }}
+          </label>
+          <input type="password" name="NewPassword2" id="NewPassword2" required="required"
+            autocomplete="new-password" />
+        </div>
+
+        {% if alert is defined %}
+        <div class="alert alert-danger alert-dismissible fade show mt-2 mb-2" role="alert">
+          <button type="button" class="close" data-dismiss="alert" aria-label="close">&times;</button>
+          {{ alert | escape }}
+        </div>
+        {% endif %}
+
+        <input type="hidden" name="cdata" value="{{ cdata }}" />
+        <p class="mt-3">
+          <button type="submit" name="Action" value="Register" class="flat-btn">
+            {{ UI.Vocabulary.Update }}
+          </button>
+        </p>
+      </div>
+    </div>
+    <input type="hidden" name="_csrf" value="{{ _csrf }}" />
+  </form>
+</div>
+{% endblock %}
+
+{% block bottom_script %}
+{{ super() }}
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/iScroll/5.2.0/iscroll.min.js"></script>
+<script type="text/javascript">
+$(window).on('load', function (e) {
+  $('#NewPassword1').tooltip({triger:'focus', title:'{{ UI.Common.PasswordHint }}'});
+});
+</script>
+{% endblock %}

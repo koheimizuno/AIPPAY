@@ -1,0 +1,20 @@
+{% extends 'direct_page.html' %}
+
+{% block main_contents %}
+{{ super() }}
+
+{% if Message is defined %}
+<p>
+    {{ Message }}
+</p>
+{% endif %}
+
+{% if Messages is defined %}
+{% for Message in Messages %}
+<p>
+    {{ Message }}
+</p>
+{% endfor %}
+{% endif %}
+
+{% endblock %}

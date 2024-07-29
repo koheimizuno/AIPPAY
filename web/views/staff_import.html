@@ -1,0 +1,67 @@
+{% extends 'inside.html' %}
+
+{% block script_and_css %}
+{{ super() }}
+<style type="text/css">
+main {
+  padding-top: 86px;
+}
+</style>
+{% endblock %}
+
+{% block main_title %}
+{{ UI.Pages.Import.Title1 }}
+{% endblock %}
+
+{% block main_contents %}
+{{ super() }}
+    <form action="/import/props" method="post" enctype="multipart/form-data">
+      <div class="ji-form-item">
+        <input type="file" id="wb" name="wb" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+      </div>
+      <p class="buttons">
+        <button class="flat-btn" type="submit">
+          {{ UI.Vocabulary.Import }}
+        </button>
+        <input type="hidden" name="_csrf" value="{{ _csrf }}">
+      </p>
+    </form>
+    {% if Errors is defined %}
+    <table class="table table-hover table-responsive table-sm">
+      <thead>
+        <tr>
+          <th>Line</th>
+          <th>Error</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for Error in Errors %}
+        <tr>
+          <td>{{ Error.Line }}</td>
+          <td>{{ Error.Message }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+    {% if message is defined %}
+    <p class="msg-alert">
+      {{ message }}
+    </p>
+    {% endif %}
+    <div class="mt-4">
+      <p>
+        <a href="/api/import/template/simple" class="mr-3">
+          <i class="fas fa-file-download"></i>
+          {{ UI.Pages.Import.GetTemplate }}
+        </a>
+      </p>
+    </div>
+{% endblock %}
+
+{% block bottom_script %}
+<script type="text/javascript">
+$(window).on("load", _ => {
+});
+</script>
+{% endblock %}

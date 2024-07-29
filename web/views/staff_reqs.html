@@ -1,0 +1,447 @@
+{% extends 'inside.html' %}
+
+{% block script_and_css %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="/static/css/staff_reqs.css">
+{% endblock %}
+
+{% block main_title %}
+{{ UI.Pages.Request.TitleForStaff }}
+{% endblock %}
+
+{% block main_contents %}
+<p class="buttons buttons-right head-buttons">
+  <button id="btn-upload-open" class="flat-btn button-mini">
+    {{ UI.Pages.Request.TEXT000177 }}
+  </button>
+</p>
+
+<table class="ji-table ji-table-reqs">
+  <thead>
+    <tr>
+      <th>{{ UI.Pages.Request.TEXT000004 }}</th>
+      <th>{{ UI.Pages.Request.TEXT000183 }}</th>
+      <th>{{ UI.Pages.Request.TEXT000184 }}</th>
+      <th>{{ UI.Pages.Request.TEXT000263 }}</th>
+      <th>{{ UI.Vocabulary.RegistrationNumber }}</th>
+      <th>{{ UI.Vocabulary.RightHolder }}</th>
+      <th>{{ UI.Pages.Request.TEXT000264 }}</th>
+      <th>{{ UI.Vocabulary.ProcedureLimit }}</th>
+      <th>{{ UI.Vocabulary.AgentFee }}</th>
+      <th>{{ UI.Vocabulary.OfficialFee }}</th>
+      <th>{{ UI.Pages.Request.TEXT000005 }}</th>
+      <th>{{ UI.Pages.Request.TEXT000150 }}</th>
+      <th>{{ UI.Pages.Request.TEXT000151 }}</th>
+      <th>{{ UI.Pages.Request.TEXT000041 }}</th>
+      <!-- th>{{ UI.Pages.Request.TEXT00015 }}</th -->
+      <th>{{ UI.Pages.Request.TEXT000251 }}</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for pc in PropCounts %}
+      {% if (loop.index % 2) == 1 %}{% set rowClass='odd' %}{% else %}{% set rowClass='even' %}{% endif %}
+    {% for i in range(0, pc.Props) %}
+    <tr class="row-{{ pc.Id }} row-{{ rowClass }}{% if i == 0 %} row-first{% endif %}{% if i == (pc.Props - 1) %} row-last{% endif %}" id="row-{{ pc.Id }}-{{ i }}">
+      <td class="rv-req-time">
+        <p class="date"></p>
+        <p class="time"></p>
+      </td>
+      <td>
+        <p class="rv-user-org"></p>
+        <p class="rv-user-name"></p>
+      </td>
+      <td class="rv-user-email">
+      </td>
+      <td class="rv-man-num" data-row-key=""></td>
+      <td>
+        <p class="rv-country"></p>
+        <p><span class="rv-law"></span><span class="rv-reg-num"></span></p>
+      </td>
+      <td class="rv-holders"></td>
+      <td class="rv-exp-date cell-date"></td>
+      <td class="rv-next-limit cell-date"></td>
+      <td class="rv-agent-fee cell-currency">
+        <span class="price"></span><span class="currency-unit"></span>
+      </td>
+      <td class="rv-office-fee cell-currency">
+        <span class="price"></span><span class="currency-unit"></span>
+      </td>
+      {% if i == 0 %}
+      <td rowspan="{{ pc.Props }}" class="cell-currency rv-total-amount">
+        <span class="price"></span><span class="currency-unit"></span>
+      </td>
+      {% endif %}
+      <td class="cell-has-button">
+        <p>
+          <!-- 入金確認・納付書のダウンロード -->
+          <button type="button" class="btn-paid-and-paper rv-btn-prop flat-btn button-mini">
+            {{ UI.Pages.Request.TEXT000014 }}
+          </button>
+        </p>
+        <p class="rv-paper-time record-date"></p>
+      </td>
+      <td class="ulDate rv-up-time cell-date">
+      </td>
+      <td class="rpDate rv-rep-time cell-date">
+      </td>
+      <!-- td>
+        <p>
+          <button class="dnBtn rv-btn-prop flat-btn button-mini">
+            {{ UI.Pages.Request.TEXT000012 }}<br>
+            <i class="far fa-check-circle"></i>
+          </button>
+        </p>
+        <p class="dnDate rv-comp-time"></p>
+      </td -->
+      <td class="cell-memo">
+        <p class="cell-memo-1">
+          <textarea class="rv-memo-box" rows="1" cols="15"></textarea>
+        </p>
+        <p class="cell-memo-2">
+          <button class="rv-memo-up flat-btn button-mini rv-btn-prop">{{ UI.Pages.Request.TEXT000252 }}</button>
+        </p>
+      </td>
+      <td class="cell-has-button">
+        <!-- 詳細ボタン -->
+        <button class="dldBtn rv-btn-prop flat-btn button-mini">
+          {{ UI.Pages.Request.TEXT000013 }}
+        </button>
+      </td>
+    </tr>
+    {% endfor %}
+  {% endfor %}
+  </tbody>
+</table>
+
+{% if Page.Max > 1 %}
+<nav>
+  <ul class="pagination">
+    <li class="page-item">
+      <a class="page-link"
+        {% if Page.Current > 1%}href="{{ Page.Path }}/1"{% endif %}>
+        <i class="fas fa-angle-double-left"></i>
+      </a>
+    </li>
+    {% for p in range(1, Page.Max + 1) %}
+    {% if (p + 5) >= Page.Current and (p - 7) <= Page.Current %}
+    <li class="page-item{% if Page.Current == p %} active{% endif %}">
+      <a class="page-link"
+        {% if p != Page.Current %}href="{{ Page.Path }}/{{ p }}"{% endif %}>{{ p }}</a>
+    </li>
+    {% endif %}
+    {% endfor %}
+    <li class="page-item">
+      <a class="page-link"
+        {% if Page.Current < Page.Max %}href="{{ Page.Path }}/{{ Page.Max }}"{% endif %}>
+        <i class="fas fa-angle-double-right"></i>
+      </a>
+    </li>
+  </ul>
+</nav>
+{% endif %}
+
+<!-- アップロードダイアログ -->
+<div class="modal fade" id="ulDlg" tabindex="-1" role="dialog" aria-labelledby="ulDlgLbl" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="ulDlgLbl">
+          {{ UI.Vocabulary.Upload }}
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div id="drp1">
+            <form id="ulDlgFm">
+              <p>
+                <input type="file" id="file_0" name="file_0" accept="application/pdf">
+              </p>
+              <p>
+                <button type="button" id="doUlBtn" class="flat-btn">
+                  {{ UI.Vocabulary.Upload }}
+                </button>
+              </p>
+            </form>
+            <p class="p-center">
+              {{ UI.Pages.Request.TEXT000182 }}
+            </p>
+            <ul id="ulDlgMsg"></ul>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!--権利ごとの詳細ダイアログ -->
+<div class="modal fade" id="dtl-modal-1" tabindex="-1" role="dialog" aria-labelledby="dlDlgLbl" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="ulDlgLbl">
+          #
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+
+        <!-- 詳細リスト -->
+        <ul class="ji-blocklist dtl1-prop-1"></ul>
+        <ul class="ji-blocklist dtl1-prop-2"></ul>
+        <ul class="ji-blocklist dtl1-prop-3"></ul>
+
+        <div class="dtl-buttons buttons">
+          <a role="button" class="flat-btn dtl-dl-invoice">
+            {{ UI.Pages.Request.TEXT000160 }}
+          </a>
+          <a role="button" class="flat-btn dtl-dl-jpo">
+            {{ UI.Pages.Request.TEXT000161 }}
+          </a>
+          <!-- 登録原簿の閲覧請求 -->
+          <a role="button" class="flat-btn dtl-dl-gembo">
+            {{ UI.Pages.Request.TEXT000257 }}
+          </a>
+          <!-- 更新登録申請書（補充）・委任状 -->
+          <a role="button" class="flat-btn dtl-dl-hoju">
+            {{ UI.Pages.Request.TEXT000206 }}
+          </a>
+          <!-- 抹消登録申請書・放棄書・委任状 -->
+          <a role="button" class="flat-btn dtl-dl-del">
+            {{ UI.Pages.Request.TEXT000205 }}
+          </a>
+        </div>
+
+        <h2>{{ UI.Pages.Request.TEXT000021 }}</h2>
+
+        <ul class="dtl-procs">
+          <li>****</li>
+        </ul>
+
+        <h2>{{ UI.Pages.Request.TEXT000022 }}</h2>
+
+        <h3>{{ UI.Pages.Request.TEXT000024 }}</h3>
+
+        <table class="dtl1-price dtl1-price-agent">
+          <tbody>
+            <tr>
+              <td>*****</td>
+              <td><span class="price">999,999</span><span class="currency-unit">JPY</span></td>
+              <td><span class="price">999,999</span><span class="currency-unit">JPY</span></td>
+            </tr>            
+          </tbody>
+        </table>
+
+        <h3>{{ UI.Pages.Request.TEXT000023 }}</h3>
+
+        <table class="dtl1-price dtl1-price-office">
+          <tbody>
+            <tr>
+              <td>*****</td>
+              <td><span class="price">999,999</span><span class="currency-unit">JPY</span></td>
+              <td><span class="price">999,999</span><span class="currency-unit">JPY</span></td>
+            </tr>            
+          </tbody>
+        </table>
+
+        <!-- 請求合計 -->
+        <h3>{{ UI.Pages.Request.TEXT000005 }}</h3>
+        <p class="dtl1-total">
+          <span class="price"></span><span class="currency-unit"></span>
+        </p>
+
+        <!-- 同時に依頼されたその他の権利 -->
+        <div class="dtl1-others-area">
+          <h3>{{ UI.Pages.Request.TEXT000185 }}</h3>
+          <ul class="dtl1-others"></ul>
+        </div>
+
+        <!-- アップロードされたファイル -->
+        <div class="dtl1-files-area">
+          <h3>{{ UI.Pages.Request.TEXT000191 }}</h3>
+          <ul class="dtl1-files"></ul>
+        </div>
+
+        <div class="dtl-cancel-area buttons">
+          <button id="dtl-btn-cancel" class="dtl-btn-cancel flat-btn">
+            {{ UI.Pages.Request.TEXT000159 }}
+          </button>
+        </div>
+  
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- 領収書発送書類作成のダイアログ -->
+<div class="modal fade" id="dlg-receipt" tabindex="-1" role="dialog" aria-labelledby="dlg-receipt-title" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="dlg-receipt-title">
+          {{ UI.Pages.Request.TEXT000153 }}
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+
+        <!-- ID -->
+        <input type="hidden" id="dlg-receipt-req-id">
+        <input type="hidden" id="dlg-receipt-prop-id">
+
+        <!-- 名称 -->
+        <div class="ji-form-item ji-form-item-v">
+          <label>
+            {{ UI.Pages.Request.TEXT000154 }}
+          </label>
+          <div id="dlg-receipt-name"></div>
+        </div>
+
+        <!-- 住所-->
+        <div class="ji-form-item ji-form-item-v">
+          <label for="dlg-receipt-addr">
+            {{ UI.Pages.Request.TEXT000156 }}
+          </label>
+          <input type="text" id="dlg-receipt-addr">
+        </div>
+
+        <!-- ボタン -->
+        <p class="buttons">
+          <button type="button" id="dlg-receipt-make" class="flat-btn">
+            {{ UI.Pages.Request.TEXT000157 }}
+          </button>
+        </p>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- 整理番号のダイアログ -->
+<div class="modal fade" id="dlg-mannum" tabindex="-1" role="dialog" aria-labelledby="dlg-mannum-title" aria-hidden="true">
+  <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="dlg-mannum-title">
+          {{ UI.Pages.Request.TEXT000263 }}
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- ID -->
+        <input type="hidden" id="dlg-mannum-req-id">
+        <input type="hidden" id="dlg-mannum-prop-id">
+        <!-- 整理番号-->
+        <div class="ji-form-item ji-form-item-v">
+          <label for="dlg-mannum-text">
+            {{ UI.Pages.Request.TEXT000263 }}
+          </label>
+          <input type="text" id="dlg-mannum-text" autocomplete="off">
+        </div>
+        <!-- ボタン -->
+        <p class="buttons">
+          <button type="button" id="dlg-mannum-update" class="flat-btn">
+            {{ UI.Pages.Request.TEXT000265 }}
+          </button>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 非表示フォーム -->
+<div class="d-none">
+
+  <!-- 見積提出済処理用フォーム -->
+  <form id="ji-form-est" action="/s/reqs/estimated" method="post">
+    <input type="hidden" name="Filters" value="{{ FiltersData }}">
+    <input type="hidden" name="Page" value="{{ Page.Current }}">
+    <input type="hidden" name="Request" class="ji-form-id-req">
+  </form>
+
+  <!-- 手続完了処理用フォーム -->
+  <form id="ji-form-comp" action="/s/reqs/completed" method="post">
+    <input type="hidden" name="Filters" value="{{ FiltersData }}">
+    <input type="hidden" name="Page" value="{{ Page.Current }}">
+    <input type="hidden" name="Request" class="ji-form-id-req">
+    <input type="hidden" name="Property" class="ji-form-id-prop">
+  </form>
+
+  <!-- キャンセル処理用フォーム -->
+  <form id="ji-form-cancel" action="/s/reqs/cancel" method="post">
+    <input type="hidden" name="Filters" value="{{ FiltersData }}">
+    <input type="hidden" name="Page" value="{{ Page.Current }}">
+    <input type="hidden" name="Request" class="ji-form-id-req">
+    <input type="hidden" name="Property" class="ji-form-id-prop">
+  </form>
+  
+</div>
+
+<!-- キャンセル確認ダイアログ -->
+<div class="modal fade" id="dlg-cancel" tabindex="-1" role="dialog" aria-labelledby="dlg-cancel-label" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="dlg-cancel-label">
+          {{ UI.Pages.Request.TEXT000253 }}
+        </h5>
+      </div>
+
+      <div class="modal-body">
+        <p>
+          {{ UI.Pages.Request.TEXT000057 }}
+        </p>
+        <p>
+          <input type="password" id="dlg-cancel-pwd" size="10" autocomplete="off">
+        </p>
+        <p id="dlg-cancel-msg" class="msg-alert"></p>
+        <input type="hidden" id="dlg-cancel-id">
+      </div>
+
+      <div class="modal-footer">
+        <p class="buttons">
+          <button type="button" id="dlg-cancel-yes" class="flat-btn">
+            {{ UI.Pages.Request.TEXT000255 }}
+          </button>
+          <button type="button" id="dlg-cancel-no" class="flat-btn">
+            {{ UI.Pages.Request.TEXT000256 }}
+          </button>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block bottom_script %}
+{{ super() }}
+<div id="download-dummy" class="d-none"></div>
+<script type="text/javascript">
+const initData = [
+  {% for r in Requests %}
+    {% if loop.index > 1 %},{% endif %}{{ r | safe }}
+  {% endfor %}
+];
+</script>
+<script type="text/javascript" src="/js/staff_reqs.js"></script>
+{% endblock %}

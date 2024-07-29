@@ -1,0 +1,28 @@
+{% extends 'direct_page.html' %}
+
+{% block main_contents %}
+{{ super() }}
+
+<dl>
+    <dt>{{ UI.Pages.Property.TEXT000161 }}</dt>
+    <dd>{{ RegistrationNumber }}</dd>
+    {% if ManagementNumber is defined %}
+    <dt>{{ UI.Pages.Request.TEXT000266 }}</dt>
+    <dd>{{ ManagementNumber }}</dd>
+    {% endif %}
+    <dt>{{ UI.Pages.Property.TEXT000162 }}</dt>
+    <dd>{{ HolderNames }}</dd>
+    <dt>{{ UI.Pages.Property.TEXT000163 }}</dt>
+    <dd>{{ Subject }} ({{ LawName }})</dd>
+    <dt>{{ UI.Pages.Property.TEXT000164 }}</dt>
+    <dd>{{ NextProcedureLimit | date_format }}</dd>
+</dl>
+
+<p>
+    {{ UI.Pages.Property.TEXT000011 | nl2br }}
+</p>
+<p>
+    <a href="{{ CancelLink }}" role="button" class="flat-btn">{{ UI.Pages.Property.TEXT000169 }}</a>
+</p>
+
+{% endblock %}

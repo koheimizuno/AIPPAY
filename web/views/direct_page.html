@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block script_and_css %}
+{{ super() }}
+<link rel="stylesheet" href="/static/css/direct_page.css">
+{% endblock %}
+
+{% block body %}
+
+<header>
+    <div class="title">
+    <a href="/e/req/">
+        <img src="/static/img/logo_400.png" height="60" width="400" alt="AIPPAY" class="only-pc">
+        <img src="/static/img/logo_200.png" height="30" width="200" alt="AIPPAY" class="only-sp">
+    </a>
+    </div>
+    <div class="user">
+        <span class="user-name">
+            {{ d_user_name }}
+        </span>
+    </div>
+</header>
+
+<main>
+    <div class="main-container">
+        {% block main_contents %}{% endblock %}
+    </div>
+</main>
+
+<footer>
+    &copy;2023 {{ UI.Common.ProviderName }}
+</footer>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/iScroll/5.2.0/iscroll.min.js"></script>
+
+{% block bottom_script %}{% endblock %}
+
+{% endblock %}

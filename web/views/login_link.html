@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block script_and_css %}
+<style type="text/css">
+body {
+  display: flex;
+  flex-direction: column;
+}
+body > form {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 88px;
+  min-width: 800px;
+}
+body > form > * {
+  margin-bottom: 32px;
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<form id="form1" name="form1" method="POST" action="/loginlink">
+
+      <p>
+        <img src="/static/img/logo_400.png" alt="AIPPAY">
+      </p>
+
+      <h2 class="">
+        {{ UI.Pages.LogIn.TEXT000001 }}
+      </h2>
+
+      <p>{{ UI.Pages.LogIn.TEXT000010 }}</p>
+
+      <div class="ji-form-item ji-form-item-v">
+        <label for="MailAddress">
+          {{ UI.Vocabulary.MailAddress }}
+        </label>
+        <input type="text" id="MailAddress" name="MailAddress"
+          required="required" autocomplete="email"{% if MailAddress is defined %} value="{{ MailAddress }}"{% endif %}>
+      </div>
+
+      {% if Message is defined %}
+      <p >{{ Message }}</p>
+      {% endif %}
+      {% if AlertMessage is defined %}
+      <p class="msg-alert">{{ AlertMessage }}</p>
+      {% endif %}
+
+      <p class="buttons">
+        <button type="button" id="button1" name="action" value="post"
+          class="flat-btn" disabled>
+          {{ UI.Pages.LogIn.TEXT000002 }}
+        </button>
+      </p>
+
+    </div>
+
+    <input type="hidden" id="recaptchaResponse" name="recaptchaResponse">
+    <input type="hidden" name="_csrf" value="{{ _csrf }}">
+
+  </div>
+
+</form>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/iScroll/5.2.0/iscroll.min.js"></script>
+<script src="https://www.google.com/recaptcha/api.js?render=6LdHGdMZAAAAAP5tSScZ2ZNOe_Am7nq7hI7pPLXd"></script>
+<script type="text/javascript">
+grecaptcha.ready(function() {
+  $('#button1').prop('disabled', false);
+  $('#button1').on('click', function(e) {
+    if ($('#form1')[0].reportValidity()) {
+      grecaptcha.execute('6LdHGdMZAAAAAP5tSScZ2ZNOe_Am7nq7hI7pPLXd', {action: 'homepage'}).then(function(token) {
+        $('#recaptchaResponse').val(token);
+        $('#form1').submit();
+      });
+    }
+  });
+});
+</script>
+{% endblock %}

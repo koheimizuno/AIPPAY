@@ -1,0 +1,41 @@
+{% extends 'inside.html' %}
+
+{% block main_contents %}
+
+{% if can_exit %}
+
+<p>
+  {{ UI.Pages.Exit.TopMessage }}
+</p>
+<p>
+  {{ UI.Pages.Exit.Message | nl2br }}
+</p>
+<form action="/exit" method="post">
+  <div class="form-check">
+    <input type="checkbox" class="form-check-input" name="Confirm" id="Confirm1" value="1" required="required" />
+    <label class="form-check-label" for="Confirm1">
+      {{ UI.Pages.Exit.Confirm }}
+    </label>
+  </div>
+  <div>
+    <button type="submit"
+      name="Action" value="Exit"
+      class="ji-btn">
+      {{ UI.Pages.Exit.Do }}
+    </button>
+    <a role="button" class="ji-btn ji-btn-mini ml-3"
+      href="/login">
+      {{ UI.Pages.Exit.Cancel }}
+    </a>
+  </div>
+  <input type="hidden" name="_csrf" value="{{ _csrf }}" />
+</form>
+
+{% else %}
+
+<p>
+  {{ UI.Pages.Exit.CanNotExit }}
+</p>
+
+{% endif %}
+{% endblock %}

@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+
+{% block script_and_css %}
+<style type="text/css">
+body {
+  height: 100vh;
+  display: flex;
+}
+body > main {
+  background-color: #fff;
+  width: calc(100% - 360px);
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  display: flex;
+}
+body > .blue {
+  background-color: #1e2188;
+  width: 360px;
+  margin: 0;
+  margin-right: 0;
+  margin-left: auto;
+  padding: 0;
+  height: 100%;
+  border-right: 100px solid #05b9ee;
+}
+body > main > .login-form {
+  margin: auto;
+  padding: 8px;
+  max-width: 100vw;
+}
+body > main > .login-form h1 {
+  margin-bottom: 24px;
+}
+@media (max-width: 767px) {
+  body > main {
+    width: calc(100vw - 24px);
+  }
+  body > .blue {
+    width: 24px;
+    border-right-width: 8px;
+  }
+  body > main > .login-form {
+    margin-top: 24px;
+  }
+  body > main > .login-form h1 {
+    margin-bottom: 16px;
+  }
+}
+</style>
+{% endblock %}
+
+{% block body %}
+<body>
+
+<main>
+
+  <div class="login-form">
+
+            <form id="form1" name="form1" method="POST" action="/login">
+              <h1>
+                <img src="/static/img/logo_400.png" alt="{{ UI.Common.ServiceName }}" class="only-pc">
+                <img src="/static/img/logo_200.png" alt="{{ UI.Common.ServiceName }}" class="only-sp">
+              </h1>
+              <div class="ji-form-item ji-form-item-v">
+                <label for="MailAddress">
+                  {{ UI.Vocabulary.MailAddress }}
+                </label>
+                <input type="email" id="MailAddress" name="MailAddress"
+                  required="required" autocomplete="email" autofocus="autofocus"
+                  size="60" />
+              </div>
+              <div class="ji-form-item ji-form-item-v">
+                <label for="Password">
+                  {{ UI.Vocabulary.Password }}
+                </label>
+                <input type="password" id="Password" name="Password"
+                  required="required"
+                  size="60" />
+              </div>
+              {% if alert is defined %}
+              <div class="text-danger">
+                {{ alert | escape }}
+              </div>
+              {% endif %}
+              {% if information is defined %}
+              <div class="text-info">
+                {{ information | escape }}
+              </div>
+              {% endif %}
+              <div class="">
+                <button type="button" id="button1"
+                  class="flat-btn" disabled>
+                  {{ UI.Vocabulary.LogIn }}
+                </button>
+              </div>
+              <p class="mt-4">
+                <a href="/loginlink">
+                  {{ UI.Pages.LogIn.NewAccount }}
+                </a>
+              </p>
+              <p class="mt-2 mb-4">
+                <a href="/pwd/reset">
+                  {{ UI.Pages.LogIn.LostPassword }}
+                </a>
+              </p>
+              <input type="hidden" name="_rd" value="{{ _rd }}" />
+              <input type="hidden" name="Action" value="LogIn" />
+              <input type="hidden" id="recaptchaResponse" name="recaptchaResponse" />
+              <input type="hidden" name="_csrf" value="{{ _csrf }}" />
+            </form>
+
+            <p class="mt-4">
+              <span class="mr-2 text-muted">{{ UI.Vocabulary.Language }}:</span>
+              <a href="/login?lang=ja" role="button" class="mr-1 flat-btn button-mini {% if UI_LANG != 'ja' %}button-deprecated{% endif %}">{{ UI.Language.ja }}</a>
+              <!--
+              <a href="/?lang=en" role="button" class="mr-1 ji-btn ji-btn-mini {% if UI_LANG == 'en' %}btn-light{% else %}btn-dark{% endif %}">{{ UI.Language.en }}</a>
+              <a href="/?lang=zh_CN" role="button" class="mr-1 ji-btn ji-btn-mini {% if UI_LANG == 'zh_CN' %}btn-light{% else %}btn-dark{% endif %}">{{ UI.Language.zh_CN }}</a>
+              <a href="/?lang=zh_TW" role="button" class="mr-1 ji-btn ji-btn-mini {% if UI_LANG == 'zh_TW' %}btn-light{% else %}btn-dark{% endif %}">{{ UI.Language.zh_TW }}</a>
+              -->
+            </p>
+
+            <p class="mt-4">
+              <a href="/privacy" target="_blank">{{ UI.Vocabulary.PrivacyPolicy }}</a>
+            </p>
+
+  </div>
+</main>
+
+<div class="blue"></div>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://www.google.com/recaptcha/api.js?render=6LdHGdMZAAAAAP5tSScZ2ZNOe_Am7nq7hI7pPLXd"></script>
+<script type="text/javascript">
+grecaptcha.ready(function() {
+  $('#button1').prop('disabled', false);
+  $('#button1').on('click', function(e) {
+    if ($('#form1')[0].reportValidity()) {
+      grecaptcha.execute('6LdHGdMZAAAAAP5tSScZ2ZNOe_Am7nq7hI7pPLXd', {action: 'homepage'}).then(function(token) {
+        $('#recaptchaResponse').val(token);
+        $('#form1').submit();
+      });
+    }
+  });
+});
+</script>
+
+</body>
+{% endblock %}
